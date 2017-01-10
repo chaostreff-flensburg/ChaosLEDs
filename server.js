@@ -6,6 +6,7 @@
 var express         = require("express"),
     app             = express(),
     router          = express.Router(),
+    http            = require('http').Server(app),
     cp              = require('child_process'),
     led             = cp.fork('ledProcess.js'),
     server          = require('http').createServer(app),
@@ -17,7 +18,7 @@ var express         = require("express"),
     PORT            = process.env.PORT || 8081,
     publicDir       = process.argv[2] || __dirname + '/public',
     path            = require('path'),
-    io          = require("socket.io"),
+    io              = require("socket.io")(http),
     exphbs          = require('express-handlebars'),
     session         = require('express-session');
 
@@ -53,6 +54,14 @@ router.get('/', function(req, res) {
 app.use(router);
 
 // ====================
+// Socket.io
+// ====================
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+});
+
+// ====================
 // Control LED Process
 // ====================
 
@@ -67,9 +76,12 @@ led.send('wululu');
 // Start the Server
 // ====================
 
+//start socket.io listener
+http.listen(PORT, function(){
+  console.log("Server showing %s listening at http://%s:%s", publicDir, hostname, PORT);
+});
+
+//start express
 app.start = app.listen = function(){
     return server.listen.apply(server, arguments);
 };
-
-app.start(PORT);
-console.log("Server showing %s listening at http://%s:%s", publicDir, hostname, PORT);
