@@ -1,4 +1,4 @@
-var gpio = require('raspi-wiringpi');
+var pi = require('wiring-pi');
 
 //receive signal from parent
 process.on('message', function(msg) {

@@ -1,8 +1,61 @@
 <html>
+
 <body>
-  <script src="/socket.io.min.js"></script>
-  <script>
-  var socket = io();
-</script>
+    <script src="/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+        var controlling = false;
+    </script>
+    <div>
+        Red<br> 0 <input id="rValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 255
+    </div><br/>
+
+    <div>
+        Green<br> 0 <input id="gValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 255
+    </div><br/>
+
+    <div>
+        Blue<br> 0 <input id="bValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 255
+    </div><br/>
+    <script>
+        var rSlider = document.getElementById('rValue');
+        var gSlider = document.getElementById('gValue');
+        var bSlider = document.getElementById('bValue');
+
+        var toggleSliders = function(control) {
+            rSlider.disabled = !control;
+            gSlider.disabled = !control;
+            bSlider.disabled = !control;
+        }
+
+        //toggle sliders initially
+        toggleSliders(controlling);
+
+        //set intial slider values
+        socket.on('initialize', function(msg) {
+            rSlider.value = msg.r;
+            gSlider.value = msg.g;
+            bSlider.value = msg.b;
+        });
+
+        //lock sliders if user is not in control
+        socket.on('controlling', function(msg) {
+            console.log(msg);
+            controlling = msg.control;
+            toggleSliders(controlling);
+        });
+
+        //transmit slider values if user is controlling
+        socket.on('r', function(msg) {
+            rSlider.value = msg;
+        });
+        socket.on('g', function(msg) {
+            gSlider.value = msg;
+        });
+        socket.on('b', function(msg) {
+            bSlider.value = msg;
+        });
+    </script>
 </body>
+
 </html>
