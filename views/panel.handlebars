@@ -43,6 +43,15 @@
             console.log(msg);
             controlling = msg.control;
             toggleSliders(controlling);
+            gSlider.value = msg.g;
+            bSlider.value = msg.b;
+        });
+
+        //lock sliders if user is not in control
+        socket.on('controlling', function(msg) {
+            console.log(msg);
+            controlling = msg.control;
+            toggleSliders(controlling);
         });
 
         //transmit slider values if user is controlling
@@ -55,6 +64,13 @@
         socket.on('b', function(msg) {
             bSlider.value = msg;
         });
+
+        //if client is not controlling, preiodically check if control has been given to client
+        setTimeout(function() {
+          if(!controlling) {
+            socket.emit('controllercheck', {});
+          }
+        }, 1000);
     </script>
 </body>
 

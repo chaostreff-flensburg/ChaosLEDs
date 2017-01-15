@@ -61,34 +61,93 @@ var r, g, b = 255;
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
-const CONTROLTIME = 15;
+const CONTROLTIME = 5;
+
+//function to check if controllingSockets turn is over
+var controllerCheck = function() {
+    //check if controlling Socket is free
+    if (controllingSocket === "") {
+        //make first socket in waitinglist controller
+        controllingSocket = waitingSockets[0];
+        controllingTimestamp = Date.now();
+
+        //inform new controlling socket
+        io.to(controllingSocket).emit('controlling', {
+            control: true
+        });
+
+        //remove first socket from waiting list
+        waitingSockets.splice(0, 1);
+    }
+
+    //replace controller if he is controlling for longer than the allowed controlling time
+    if (controllingSocket !== "" && Date.now() - controllingTimestamp > CONTROLTIME) {
+        //add current controller at the end of the waiting list
+        waitingSockets.push(controllingSocket);
+
+        //make first socket in waiting list the controller and set timestamp
+        controllingSocket = waitingSockets[0];
+        controllingTimestamp = Date.now();
+
+        //inform new controlling socket
+        io.to(controllingSocket).emit('controlling', {
+            control: true
+        });
+
+        //remove first socket from waiting list
+        waitingSockets.splice(0, 1);
+    }
+    console.log(controllingSocket);
+    console.log(waitingSockets);
+};
 
 io.on('connection', function(socket) {
 
     //add socket to waiting pool
     waitingSockets.push(socket.id);
 
-    //check if controlling Socket is free
-    if (controllingSocket === "") {
-        //make current socket controller
-        controllingSocket = socket.id;
-        controllingTimestamp = Date.now();
-
-        //remove current socket from waiting list
-        waitingSockets.splice(waitingSockets.indexOf(socket.id), 1);
-    }
-
-    //replace controller if he is controlling for longer than the allowed controlling time
+    //check current controller
+    controllerCheck();
 
     //tell socket whether it is the controller or not
-    socket.emit('controlling', {control : (socket.id === controllingSocket)});
+    socket.emit('controlling', {
+        control: (socket.id === controllingSocket)
+    });
 
-    console.log('A User connected');
     //send initial values to new user
     socket.emit('initialize', {
         'r': r,
         'g': g,
         'b': b
+    });
+
+    //let clients check if the controller has changed
+    socket.on('controllercheck', function() {
+      controllerCheck();
+    });
+
+    //replace controller on disconnect/ remove socket from waitinglist
+    socket.on('disconnect', function() {
+        //check if socket is controller
+        if (socket.id === controllingSocket) {
+
+            //make first socket in waitinglist controller
+            controllingSocket = waitingSockets[0];
+            controllingTimestamp = Date.now();
+
+            //inform new controlling socket
+            io.to(controllingSocket).emit('controlling', {
+                control: true
+            });
+        }
+
+        //check if socket is in waiting list
+        removeWaitingIndex = waitingSockets.indexOf(socket.id);
+
+        if (removeWaitingIndex > -1) {
+            //remove socket from waiting list
+            waitingSockets.splice(removeWaitingIndex, 1);
+        }
     });
 
     //handle incoming values
