@@ -5,6 +5,7 @@
     <script>
         var socket = io();
         var controlling = false;
+        const checkupTime = 1000;
     </script>
     <div>
         Red<br> 0 <input id="rValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 255
@@ -65,12 +66,18 @@
             bSlider.value = msg;
         });
 
-        //if client is not controlling, preiodically check if control has been given to client
-        setTimeout(function() {
-          if(!controlling) {
-            socket.emit('controllercheck', {});
-          }
-        }, 1000);
+        //if client is not controlling, periodically check if control has been given to client
+        var controllerCheck = function() {
+            if (!controlling) {
+              console.log("Checking for Controller change...");
+                socket.emit('controllercheck', {});
+            }
+            setTimeout(function() {
+                controllerCheck();
+            }, checkupTime);
+        }
+
+        controllerCheck();
     </script>
 </body>
 

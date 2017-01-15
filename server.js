@@ -61,7 +61,7 @@ var r, g, b = 255;
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
-const CONTROLTIME = 5;
+const CONTROLTIME = 15;
 
 //function to check if controllingSockets turn is over
 var controllerCheck = function() {
@@ -82,6 +82,10 @@ var controllerCheck = function() {
 
     //replace controller if he is controlling for longer than the allowed controlling time
     if (controllingSocket !== "" && Date.now() - controllingTimestamp > CONTROLTIME) {
+        //inform current controlling socket of controller change
+        io.to(controllingSocket).emit('controlling', {
+            control: false
+        });
         //add current controller at the end of the waiting list
         waitingSockets.push(controllingSocket);
 
@@ -123,7 +127,7 @@ io.on('connection', function(socket) {
 
     //let clients check if the controller has changed
     socket.on('controllercheck', function() {
-      controllerCheck();
+        controllerCheck();
     });
 
     //replace controller on disconnect/ remove socket from waitinglist
