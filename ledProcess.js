@@ -9,7 +9,7 @@ var b = 100;
 //set pins
 const rPin = 1;
 const gPin = 2;
-const bPin = 3;
+const bPin = 4;
 
 pi.softPwmCreate(rPin, 100, 100);
 pi.softPwmCreate(gPin, 100, 100);
