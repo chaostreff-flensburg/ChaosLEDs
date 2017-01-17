@@ -9,9 +9,9 @@ const rPin = 1;
 const gPin = 2;
 const bPin = 3;
 
-pi.softPwnCreate(rPin, 100, 100);
-pi.softPwnCreate(gPin, 100, 100);
-pi.softPwnCreate(bPin, 100, 100);
+pi.softPwmCreate(rPin, 100, 100);
+pi.softPwmCreate(gPin, 100, 100);
+pi.softPwmCreate(bPin, 100, 100);
 
 softPwmWrite(rPin, r);
 softPwmWrite(gPin, g);
