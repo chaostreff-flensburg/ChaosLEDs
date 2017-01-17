@@ -11,20 +11,18 @@ const rPin = 2;
 const gPin = 3;
 const bPin = 4;
 
-/*
-pi.pinMode(rPin, "SOFT_PWM_OUTPUT");
-pi.pinMode(gPin, "SOFT_PWM_OUTPUT");
-pi.pinMode(bPin, "SOFT_PWM_OUTPUT");
-*/
+
+pi.pinMode(rPin, pi.SOFT_PWM_OUTPUT);
+pi.pinMode(gPin, pi.SOFT_PWM_OUTPUT);
+pi.pinMode(bPin, pi.SOFT_PWM_OUTPUT);
+
 pi.softPwmCreate(rPin, 100, 100);
 pi.softPwmCreate(gPin, 100, 100);
 pi.softPwmCreate(bPin, 100, 100);
 
-while(true) {
-  pi.softPwmWrite(rPin, r);
-  pi.softPwmWrite(gPin, g);
-  pi.softPwmWrite(bPin, b);
-}
+pi.softPwmWrite(rPin, r);
+pi.softPwmWrite(gPin, g);
+pi.softPwmWrite(bPin, b);
 
 //receive signal from parent
 process.on('message', function(msg) {
