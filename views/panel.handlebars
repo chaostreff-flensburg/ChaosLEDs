@@ -5,8 +5,10 @@
     <script>
         var socket = io();
         var controlling = false;
+        var waitingTime = 0;
         const checkupTime = 1000;
     </script>
+    <div id="controlInfo">No connection to Host</div>
     <div>
         Red<br> 0 <input id="rValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 255
     </div><br/>
@@ -22,6 +24,8 @@
         var rSlider = document.getElementById('rValue');
         var gSlider = document.getElementById('gValue');
         var bSlider = document.getElementById('bValue');
+
+        var controlInfo = document.getElementById('controlInfo')
 
         var toggleSliders = function(control) {
             rSlider.disabled = !control;
@@ -41,18 +45,18 @@
 
         //lock sliders if user is not in control
         socket.on('controlling', function(msg) {
-            console.log(msg);
             controlling = msg.control;
             toggleSliders(controlling);
-            gSlider.value = msg.g;
-            bSlider.value = msg.b;
-        });
 
-        //lock sliders if user is not in control
-        socket.on('controlling', function(msg) {
-            console.log(msg);
-            controlling = msg.control;
-            toggleSliders(controlling);
+            //set control info
+            if (controlling) {
+                controlInfo.textContent = "Du kontrollierst die Chaos-Leds! Tob dich aus!";
+            } else {
+                //check if waiting time is still correct, if not, change it
+                if (waitingTime !== msg.waitingTime) {
+                    waitingTime = Math.floor(msg.waitingTime / 1000);
+                }
+            }
         });
 
         //transmit slider values if user is controlling
@@ -69,15 +73,25 @@
         //if client is not controlling, periodically check if control has been given to client
         var controllerCheck = function() {
             if (!controlling) {
-              console.log("Checking for Controller change...");
+                console.log("Checking for Controller change...");
                 socket.emit('controllercheck', {});
             }
-            setTimeout(function() {
-                controllerCheck();
-            }, checkupTime);
+            setTimeout(
+                controllerCheck, checkupTime);
         }
 
         controllerCheck();
+
+        //set waiting timer
+        var waitingTimer = function() {
+            if (!controlling) {
+                controlInfo.textContent = waitingTime + " Sekunden, bis du Led-Meister wirst!";
+                --waitingTime;
+            }
+            setTimeout(waitingTimer, 1000);
+        }
+
+        waitingTimer();
     </script>
 </body>
 

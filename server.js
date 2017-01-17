@@ -61,10 +61,44 @@ var r, g, b = 255;
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
-const CONTROLTIME = 15;
+const CONTROLTIME = 15000;
+
+//get time it takes for socket to become controller
+var waitingTimeCheck = function(socket) {
+  //check if socket is controlling
+  if(socket.id === controllingSocket) {
+    return 0;
+  }
+
+  //get remaining controlling time for current controller
+  var currentControllerRemainingTime = CONTROLTIME - (Date.now() - controllingTimestamp);
+
+  //check position in waiting list and multiply with controltime
+  var waitingTime = 0;
+  var waitingListIndex = waitingSockets.indexOf(socket.id);
+
+  if(waitingListIndex > -1) {
+    waitingTime = waitingListIndex * CONTROLTIME;
+  }
+
+  return waitingTime + currentControllerRemainingTime;
+};
 
 //function to check if controllingSockets turn is over
 var controllerCheck = function() {
+    //check for multiple id's in case of reload
+    for(var i=0; i<waitingSockets.length; i++) {
+      //delete waiting socket if duplicate of controlling socket
+      if(waitingSockets[i] === controllingSocket) {
+        waitingSockets.splice(i, 1);
+      }
+
+      //delete socket if it is a duplicate of a socket on the waiting list which appeared earlier
+      if(waitingSockets.indexOf(waitingSockets[i]) < i) {
+        waitingSockets.splice(i, 1);
+      }
+    }
+
     //check if controlling Socket is free
     if (controllingSocket === "") {
         //make first socket in waitinglist controller
@@ -86,6 +120,7 @@ var controllerCheck = function() {
         io.to(controllingSocket).emit('controlling', {
             control: false
         });
+
         //add current controller at the end of the waiting list
         waitingSockets.push(controllingSocket);
 
@@ -105,6 +140,7 @@ var controllerCheck = function() {
     console.log(waitingSockets);
 };
 
+//connection handling
 io.on('connection', function(socket) {
 
     //add socket to waiting pool
@@ -115,7 +151,8 @@ io.on('connection', function(socket) {
 
     //tell socket whether it is the controller or not
     socket.emit('controlling', {
-        control: (socket.id === controllingSocket)
+        control: (socket.id === controllingSocket),
+        waitingTime: waitingTimeCheck(socket)
     });
 
     //send initial values to new user
@@ -128,6 +165,14 @@ io.on('connection', function(socket) {
     //let clients check if the controller has changed
     socket.on('controllercheck', function() {
         controllerCheck();
+
+        //if socket is not controlling, send it its waiting time
+        if(controllingSocket !== socket.id) {
+          socket.emit('controlling', {
+            control: false,
+            waitingTime: waitingTimeCheck(socket)
+          });
+        }
     });
 
     //replace controller on disconnect/ remove socket from waitinglist
@@ -159,7 +204,7 @@ io.on('connection', function(socket) {
         //only process input from currently controlling socket
         if (socket.id === controllingSocket) {
             socket.broadcast.emit('r', msg);
-            console.log('R Value: ' + msg);
+            //console.log('R Value: ' + msg);
             r = msg;
         }
     });
@@ -168,7 +213,7 @@ io.on('connection', function(socket) {
 
         if (socket.id === controllingSocket) {
             socket.broadcast.emit('g', msg);
-            console.log('G Value: ' + msg);
+            //console.log('G Value: ' + msg);
             g = msg;
         }
     });
@@ -177,7 +222,7 @@ io.on('connection', function(socket) {
 
         if (socket.id === controllingSocket) {
             socket.broadcast.emit('b', msg);
-            console.log('B Value: ' + msg);
+            //console.log('B Value: ' + msg);
             b = msg;
         }
     });
