@@ -11,17 +11,12 @@ const rPin = 2;
 const gPin = 3;
 const bPin = 4;
 
-/*
-pi.pinMode(rPin, pi.SOFT_PWM_OUTPUT);
-pi.pinMode(gPin, pi.SOFT_PWM_OUTPUT);
-pi.pinMode(bPin, pi.SOFT_PWM_OUTPUT);
-*/
 console.log(pi.softPwmCreate(rPin, 100, 100));
 pi.softPwmCreate(gPin, 100, 100);
 pi.softPwmCreate(bPin, 100, 100);
 
 while (true) {
-    pi.softPwmWrite(rPin, r);
+    console.log(pi.softPwmWrite(rPin, r));
     pi.softPwmWrite(gPin, g);
     pi.softPwmWrite(bPin, b);
 }
