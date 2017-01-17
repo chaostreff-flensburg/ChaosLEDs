@@ -10,15 +10,15 @@
     </script>
     <div id="controlInfo">No connection to Host</div>
     <div>
-        Red<br> 0 <input id="rValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 255
+        Red<br> 0 <input id="rValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 255
     </div><br/>
 
     <div>
-        Green<br> 0 <input id="gValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 255
+        Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 255
     </div><br/>
 
     <div>
-        Blue<br> 0 <input id="bValue" type="range" min="0" max="255" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 255
+        Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 255
     </div><br/>
     <script>
         var rSlider = document.getElementById('rValue');

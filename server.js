@@ -57,7 +57,7 @@ app.use(router);
 // ====================
 // Socket.io
 // ====================
-var r, g, b = 255;
+var r, g, b = 100;
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
@@ -65,38 +65,38 @@ const CONTROLTIME = 15000;
 
 //get time it takes for socket to become controller
 var waitingTimeCheck = function(socket) {
-  //check if socket is controlling
-  if(socket.id === controllingSocket) {
-    return 0;
-  }
+    //check if socket is controlling
+    if (socket.id === controllingSocket) {
+        return 0;
+    }
 
-  //get remaining controlling time for current controller
-  var currentControllerRemainingTime = CONTROLTIME - (Date.now() - controllingTimestamp);
+    //get remaining controlling time for current controller
+    var currentControllerRemainingTime = CONTROLTIME - (Date.now() - controllingTimestamp);
 
-  //check position in waiting list and multiply with controltime
-  var waitingTime = 0;
-  var waitingListIndex = waitingSockets.indexOf(socket.id);
+    //check position in waiting list and multiply with controltime
+    var waitingTime = 0;
+    var waitingListIndex = waitingSockets.indexOf(socket.id);
 
-  if(waitingListIndex > -1) {
-    waitingTime = waitingListIndex * CONTROLTIME;
-  }
+    if (waitingListIndex > -1) {
+        waitingTime = waitingListIndex * CONTROLTIME;
+    }
 
-  return waitingTime + currentControllerRemainingTime;
+    return waitingTime + currentControllerRemainingTime;
 };
 
 //function to check if controllingSockets turn is over
 var controllerCheck = function() {
     //check for multiple id's in case of reload
-    for(var i=0; i<waitingSockets.length; i++) {
-      //delete waiting socket if duplicate of controlling socket
-      if(waitingSockets[i] === controllingSocket) {
-        waitingSockets.splice(i, 1);
-      }
+    for (var i = 0; i < waitingSockets.length; i++) {
+        //delete waiting socket if duplicate of controlling socket
+        if (waitingSockets[i] === controllingSocket) {
+            waitingSockets.splice(i, 1);
+        }
 
-      //delete socket if it is a duplicate of a socket on the waiting list which appeared earlier
-      if(waitingSockets.indexOf(waitingSockets[i]) < i) {
-        waitingSockets.splice(i, 1);
-      }
+        //delete socket if it is a duplicate of a socket on the waiting list which appeared earlier
+        if (waitingSockets.indexOf(waitingSockets[i]) < i) {
+            waitingSockets.splice(i, 1);
+        }
     }
 
     //check if controlling Socket is free
@@ -136,8 +136,6 @@ var controllerCheck = function() {
         //remove first socket from waiting list
         waitingSockets.splice(0, 1);
     }
-    console.log(controllingSocket);
-    console.log(waitingSockets);
 };
 
 //connection handling
@@ -167,11 +165,11 @@ io.on('connection', function(socket) {
         controllerCheck();
 
         //if socket is not controlling, send it its waiting time
-        if(controllingSocket !== socket.id) {
-          socket.emit('controlling', {
-            control: false,
-            waitingTime: waitingTimeCheck(socket)
-          });
+        if (controllingSocket !== socket.id) {
+            socket.emit('controlling', {
+                control: false,
+                waitingTime: waitingTimeCheck(socket)
+            });
         }
     });
 
@@ -206,6 +204,13 @@ io.on('connection', function(socket) {
             socket.broadcast.emit('r', msg);
             //console.log('R Value: ' + msg);
             r = msg;
+
+            //send current rgb values to led process
+            led.send({
+                'r': r,
+                'g': g,
+                'b': b
+            });
         }
     });
 
@@ -215,6 +220,13 @@ io.on('connection', function(socket) {
             socket.broadcast.emit('g', msg);
             //console.log('G Value: ' + msg);
             g = msg;
+
+            //send current rgb values to led process
+            led.send({
+                'r': r,
+                'g': g,
+                'b': b
+            });
         }
     });
 
@@ -224,6 +236,13 @@ io.on('connection', function(socket) {
             socket.broadcast.emit('b', msg);
             //console.log('B Value: ' + msg);
             b = msg;
+
+            //send current rgb values to led process
+            led.send({
+                'r': r,
+                'g': g,
+                'b': b
+            });
         }
     });
 });

@@ -1,8 +1,35 @@
 var pi = require('wiring-pi');
+pi.wiringPiSetup();
+
+//pwm values
+var r, g, b = 100;
+
+//set pins
+const rPin = 1;
+const gPin = 2;
+const bPin = 3;
+
+pi.softPwnCreate(rPin, 100, 100);
+pi.softPwnCreate(gPin, 100, 100);
+pi.softPwnCreate(bPin, 100, 100);
+
+softPwmWrite(rPin, r);
+softPwmWrite(gPin, g);
+softPwmWrite(bPin, b);
 
 //receive signal from parent
 process.on('message', function(msg) {
   console.log(msg);
+
+  //update pwm values
+  r = msg.r;
+  g = msg.g;
+  b = msg.b;
+
+  //update pwm writes
+  softPwmWrite(rPin, r);
+  softPwmWrite(gPin, g);
+  softPwmWrite(bPin, b);
 });
 
 //kill child process with parent
