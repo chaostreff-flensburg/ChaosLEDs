@@ -2,7 +2,9 @@ var pi = require('wiring-pi');
 pi.wiringPiSetup();
 
 //pwm values
-var r, g, b = 100;
+var r = 100;
+var g = 100;
+var b = 100;
 
 //set pins
 const rPin = 1;
@@ -22,9 +24,9 @@ process.on('message', function(msg) {
   console.log(msg);
 
   //update pwm values
-  r = msg.r;
-  g = msg.g;
-  b = msg.b;
+  r = parseInt(msg.r);
+  g = parseInt(msg.g);
+  b = parseInt(msg.b);
 
   //update pwm writes
   pi.softPwmWrite(rPin, r);
