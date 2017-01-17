@@ -13,9 +13,9 @@ pi.softPwmCreate(rPin, 100, 100);
 pi.softPwmCreate(gPin, 100, 100);
 pi.softPwmCreate(bPin, 100, 100);
 
-softPwmWrite(rPin, r);
-softPwmWrite(gPin, g);
-softPwmWrite(bPin, b);
+pi.softPwmWrite(rPin, r);
+pi.softPwmWrite(gPin, g);
+pi.softPwmWrite(bPin, b);
 
 //receive signal from parent
 process.on('message', function(msg) {
@@ -27,9 +27,9 @@ process.on('message', function(msg) {
   b = msg.b;
 
   //update pwm writes
-  softPwmWrite(rPin, r);
-  softPwmWrite(gPin, g);
-  softPwmWrite(bPin, b);
+  pi.softPwmWrite(rPin, r);
+  pi.softPwmWrite(gPin, g);
+  pi.softPwmWrite(bPin, b);
 });
 
 //kill child process with parent
