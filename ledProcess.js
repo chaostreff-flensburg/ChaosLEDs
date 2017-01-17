@@ -20,28 +20,29 @@ pi.softPwmCreate(rPin, 100, 100);
 pi.softPwmCreate(gPin, 100, 100);
 pi.softPwmCreate(bPin, 100, 100);
 
-pi.softPwmWrite(rPin, r);
-pi.softPwmWrite(gPin, g);
-pi.softPwmWrite(bPin, b);
-
+while (true) {
+    pi.softPwmWrite(rPin, r);
+    pi.softPwmWrite(gPin, g);
+    pi.softPwmWrite(bPin, b);
+}
 //receive signal from parent
 process.on('message', function(msg) {
-  console.log(msg);
+    console.log(msg);
 
-  //update pwm values
-  r = parseInt(msg.r);
-  g = parseInt(msg.g);
-  b = parseInt(msg.b);
+    //update pwm values
+    r = parseInt(msg.r);
+    g = parseInt(msg.g);
+    b = parseInt(msg.b);
 
-  //update pwm writes
-  pi.softPwmWrite(rPin, r);
-  pi.softPwmWrite(gPin, g);
-  pi.softPwmWrite(bPin, b);
+    //update pwm writes
+    pi.softPwmWrite(rPin, r);
+    pi.softPwmWrite(gPin, g);
+    pi.softPwmWrite(bPin, b);
 });
 
 //kill child process with parent
 process.on("SIGTERM", function() {
-   console.log("Parent SIGTERM detected");
-   // exit cleanly
-   process.exit();
+    console.log("Parent SIGTERM detected");
+    // exit cleanly
+    process.exit();
 });
