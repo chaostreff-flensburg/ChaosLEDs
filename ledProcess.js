@@ -16,7 +16,7 @@ pi.pinMode(rPin, pi.SOFT_PWM_OUTPUT);
 pi.pinMode(gPin, pi.SOFT_PWM_OUTPUT);
 pi.pinMode(bPin, pi.SOFT_PWM_OUTPUT);
 
-pi.softPwmCreate(rPin, 100, 100);
+console.log(pi.softPwmCreate(rPin, 100, 100));
 pi.softPwmCreate(gPin, 100, 100);
 pi.softPwmCreate(bPin, 100, 100);
 
