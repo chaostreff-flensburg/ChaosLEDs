@@ -11,8 +11,8 @@ const rPin = 2;
 const gPin = 3;
 const bPin = 4;
 
-pi.softPwmCreate(rPin, 100, 100);
-pi.softPwmCreate(gPin, 100, 100);
+pi.softPwmCreate(rPin, 10, 100);
+pi.softPwmCreate(gPin, 10, 100);
 pi.softPwmCreate(bPin, 100, 100);
 
 pi.softPwmWrite(rPin, r);
