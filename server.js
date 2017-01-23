@@ -57,9 +57,9 @@ app.use(router);
 // ====================
 // Socket.io
 // ====================
-var r = 100;
-var g = 100;
-var b = 100;
+var r = '100';
+var g = '100';
+var b = '100';
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
