@@ -1,5 +1,5 @@
 var pi = require('wiring-pi');
-pi.wiringPiSetup();
+pi.wiringPiSetupGpio();
 
 //pwm values
 var r = 0;
