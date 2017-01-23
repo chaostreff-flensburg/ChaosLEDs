@@ -41,3 +41,48 @@ process.on("SIGTERM", function() {
     // exit cleanly
     process.exit();
 });
+
+/* ---------- LED FUNCTIONS ------------- */
+
+// SYSTEM FUNCTIONS
+
+//function which chooses the correct pin by string input
+var l = function(color, brightness) {
+    var pin;
+
+    switch (color) {
+        case 'r':
+            pi.softPwmWrite(rPin, brightness);
+            break;
+
+        case 'g':
+            pi.softPwmWrite(gPin, brightness);
+            break;
+
+        case 'b':
+            pi.softPwmWrite(bPin, brightness);
+            break;
+
+        default:
+    }
+};
+
+var setAllColors = function(brightness) {
+    l('r', brightness);
+    l('g', brightness);
+    l('p', brightness);
+};
+
+// STATE FUNCTIONS
+
+// TIMED FUNCTIONS
+
+var blinkSingleColor = function(color) {
+    setAllColors(0);
+    for (var i = 0; i < 6; i++) {
+        pi.delay(300);
+        l(color, 100);
+        pi.delay(300);
+        l(color, 0);
+    }
+};

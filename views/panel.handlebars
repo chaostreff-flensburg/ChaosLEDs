@@ -86,6 +86,8 @@
         var waitingTimer = function() {
             if (!controlling) {
                 controlInfo.textContent = waitingTime + " Sekunden, bis du Led-Meister wirst!";
+
+                if(waitingTime > 0)
                 --waitingTime;
             }
             setTimeout(waitingTimer, 1000);
