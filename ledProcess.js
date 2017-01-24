@@ -26,7 +26,7 @@ process.on('message', function(msg) {
 
     switch (msg.function) {
         case 'setColors':
-            setColors(msg.r, msg.g, msg.b);
+            setColors(parseInt(msg.r), parseInt(msg.g), parseInt(msg.b));
             break;
 
         case 'blinkSingleColor':
@@ -38,7 +38,7 @@ process.on('message', function(msg) {
             break;
 
         case 'setAllColors':
-            setAllColors(msg.brightness);
+            setAllColors(parseInt(msg.brightness));
             break;
     }
 });
