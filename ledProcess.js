@@ -99,7 +99,7 @@ var singleFade = function(color) {
         l(color, i);
         pi.delay(10);
     }
-    for (var h = 100; h < 0; h--) {
+    for (var h = 100; h > 0; h--) {
         l(color, h);
         pi.delay(10);
     }
