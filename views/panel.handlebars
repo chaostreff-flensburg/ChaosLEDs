@@ -20,14 +20,14 @@
         Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 100
     </div>
     <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'g')}">
-    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'b')}">
+    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'g')}">
     <br/>
 
     <div>
         Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 100
     </div>
-    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'g')}">
-    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'g')}">
+    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'b')}">
+    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'b')}">
     <br/>
 
     <script>

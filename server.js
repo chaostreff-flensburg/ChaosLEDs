@@ -254,7 +254,7 @@ io.on('connection', function(socket) {
     socket.on('singleFade', function(msg) {
       led.send({
           'function': 'singleFade',
-          'color': msg.color
+          'color': msg
       });
     });
 
