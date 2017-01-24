@@ -209,6 +209,7 @@ io.on('connection', function(socket) {
 
             //send current rgb values to led process
             led.send({
+                'function': 'setColors',
                 'r': r,
                 'g': g,
                 'b': b
@@ -225,6 +226,7 @@ io.on('connection', function(socket) {
 
             //send current rgb values to led process
             led.send({
+                'function': 'setColors',
                 'r': r,
                 'g': g,
                 'b': b
@@ -241,11 +243,33 @@ io.on('connection', function(socket) {
 
             //send current rgb values to led process
             led.send({
+                'function': 'setColors',
                 'r': r,
                 'g': g,
                 'b': b
             });
         }
+    });
+
+    socket.on('singleFade', function(msg) {
+      led.send({
+          'function': 'singleFade',
+          'color': msg.color
+      });
+    });
+
+    socket.on('blinkSingleColor', function(msg) {
+      led.send({
+          'function': 'blinkSingleColor',
+          'color': msg
+      });
+    });
+
+    socket.on('setAllColors', function(msg) {
+      led.send({
+          'function': 'blinkSingleColor',
+          'color': msg.color
+      });
     });
 });
 

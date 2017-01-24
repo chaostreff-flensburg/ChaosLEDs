@@ -10,27 +10,39 @@
     </script>
     <div id="controlInfo">No connection to Host</div>
     <div>
-        Red<br> 0 <input id="rValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 255
-    </div><br/>
+        Red<br> 0 <input id="rValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 100
+    </div>
+    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'r')}">
+    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'r')}">
+    <br/>
 
     <div>
-        Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 255
-    </div><br/>
+        Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 100
+    </div>
+    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'g')}">
+    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'b')}">
+    <br/>
 
     <div>
-        Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 255
-    </div><br/>
+        Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 100
+    </div>
+    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'g')}">
+    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'g')}">
+    <br/>
+
     <script>
         var rSlider = document.getElementById('rValue');
         var gSlider = document.getElementById('gValue');
         var bSlider = document.getElementById('bValue');
+        var controlElements = document.getElementsByClassName('controlElement');
 
         var controlInfo = document.getElementById('controlInfo')
 
-        var toggleSliders = function(control) {
+        var toggleControlElements = function(control) {
             rSlider.disabled = !control;
             gSlider.disabled = !control;
             bSlider.disabled = !control;
+            controlElements.disabled = !control;
         }
 
         //toggle sliders initially
@@ -46,7 +58,7 @@
         //lock sliders if user is not in control
         socket.on('controlling', function(msg) {
             controlling = msg.control;
-            toggleSliders(controlling);
+            toggleControlElements(controlling);
 
             //set control info
             if (controlling) {
@@ -87,8 +99,8 @@
             if (!controlling) {
                 controlInfo.textContent = waitingTime + " Sekunden, bis du Led-Meister wirst!";
 
-                if(waitingTime > 0)
-                --waitingTime;
+                if (waitingTime > 0)
+                    --waitingTime;
             }
             setTimeout(waitingTimer, 1000);
         }

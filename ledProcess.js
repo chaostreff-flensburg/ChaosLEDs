@@ -1,15 +1,15 @@
 var pi = require('wiring-pi');
 pi.wiringPiSetupGpio();
 
-//pwm values
-var r = 0;
-var g = 0;
-var b = 100;
-
 //set pins
 const rPin = 2;
 const gPin = 3;
 const bPin = 4;
+
+//pwm values
+var r = 0;
+var g = 0;
+var b = 0;
 
 pi.softPwmCreate(rPin, 100, 100);
 pi.softPwmCreate(gPin, 100, 100);
@@ -24,15 +24,23 @@ pi.softPwmWrite(bPin, b);
 process.on('message', function(msg) {
     console.log(msg);
 
-    //update pwm values
-    r = parseInt(msg.r);
-    g = parseInt(msg.g);
-    b = parseInt(msg.b);
+    switch (msg.function) {
+        case 'setColors':
+            setColors(msg.r, msg.g, msg.b);
+            break;
 
-    //update pwm writes
-    pi.softPwmWrite(rPin, r);
-    pi.softPwmWrite(gPin, g);
-    pi.softPwmWrite(bPin, b);
+        case 'blinkSingleColor':
+            blinkSingleColor(msg.color);
+            break;
+
+        case 'singleFade':
+            singleFade(msg.color);
+            break;
+
+        case 'setAllColors':
+            setAllColors(msg.brightness);
+            break;
+    }
 });
 
 //kill child process with parent
@@ -68,14 +76,35 @@ var l = function(color, brightness) {
 };
 
 var setAllColors = function(brightness) {
-    l('r', brightness);
-    l('g', brightness);
-    l('p', brightness);
+    setColors(brightness, brightness, brightness);
 };
 
-// STATE FUNCTIONS
+var still = function() {
+    l('r', r);
+    l('g', g);
+    l('b', b);
+};
 
-// TIMED FUNCTIONS
+var setColors = function(rValue, gValue, bValue) {
+    r = rValue;
+    g = gValue;
+    b = bValue;
+
+    still();
+};
+
+var singleFade = function(color) {
+    setAllColors(0);
+    for (var i = 0; i < 100; i++) {
+        l(color, i);
+        pi.delay(10);
+    }
+    for (var h = 100; h < 0; h--) {
+        l(color, h);
+        pi.delay(10);
+    }
+    still();
+};
 
 var blinkSingleColor = function(color) {
     setAllColors(0);
@@ -85,4 +114,5 @@ var blinkSingleColor = function(color) {
         pi.delay(300);
         l(color, 0);
     }
+    still();
 };
