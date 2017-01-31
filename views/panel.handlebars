@@ -58,7 +58,7 @@
 
         //set intial slider values
         socket.on('initialize', function(msg) {
-            $('#colorpickerHolder').ColorPickerSetColor(msg);
+            console.log($('#colorpickerHolder').ColorPickerSetColor(msg));
         });
 
         //lock sliders if user is not in control
