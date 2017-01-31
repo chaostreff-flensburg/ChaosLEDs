@@ -24,42 +24,17 @@
     <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
     <script type="text/javascript" src="js/colorpicker.js"></script>
 
-    <p id="colorpickerHolder" class="controlElement">
-    </p>
+    <p id="colorpickerHolder" class="controlElement"></p>
+
     <script>
+        //add colorpicker
         $('#colorpickerHolder').ColorPicker({
             flat: true,
             onChange: function(hsb, hex, rgb) {
                 setColor(rgb);
             }
         });
-    </script>
-<!--
-    <div>
-        Red<br> 0 <input id="rValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {setColor('r', this.value)}" /> 100
-    </div>
-    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'r')}">
-    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'r')}">
-    <br/>
 
-    <div>
-        Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {setColor('g', this.value)}" /> 100
-    </div>
-    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'g')}">
-    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'g')}">
-    <br/>
-
-    <div>
-        Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {setColor('b', this.value)}" /> 100
-    </div>
-    <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'b')}">
-    <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'b')}">
-    <br/>
--->
-    <script>
-        var rSlider = document.getElementById('rValue');
-        var gSlider = document.getElementById('gValue');
-        var bSlider = document.getElementById('bValue');
         var controlElements = document.getElementsByClassName('controlElement');
 
         var controlInfo = document.getElementById('controlInfo');
@@ -81,9 +56,7 @@
 
         //set intial slider values
         socket.on('initialize', function(msg) {
-            rSlider.value = msg.r;
-            gSlider.value = msg.g;
-            bSlider.value = msg.b;
+            $('#colorpickerHolder').ColorPickerSetColor(msg);
         });
 
         //lock sliders if user is not in control
@@ -104,10 +77,6 @@
 
         //transmit slider values if user is controlling
         socket.on('color', function(msg) {
-            rSlider.value = msg.r;
-            gSlider.value = msg.g;
-            bSlider.value = msg.b;
-
             $('#colorpickerHolder').ColorPickerSetColor(msg);
 
             r = msg.r;
