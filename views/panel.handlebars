@@ -17,7 +17,7 @@
         var waitingTime = 0;
         const checkupTime = 1000;
 
-        var r = 100; 
+        var r = 100;
         var g = 100;
         var b = 100;
     </script>
@@ -29,6 +29,7 @@
     <p id="colorpickerHolder" class="controlElement"></p>
 
     <input class="controlElement" type="button" value="Fade" onclick="socket.emit('function', {'function' : 'fade', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
+    <input class="controlElement" type="button" value="Blink" onclick="socket.emit('function', {'function' : 'blink', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
 
     <script>
         //add colorpicker

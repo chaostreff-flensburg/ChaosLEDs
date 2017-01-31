@@ -133,7 +133,7 @@ var blink = function(color) {
         pi.delay(300);
         setColors(color.r, color.g, color.b);
         pi.delay(300);
-        l(color, 0);
+        setAllColors(0);
     }
     still();
 };
