@@ -56,24 +56,27 @@ process.on("SIGTERM", function() {
 
 //function which chooses the correct pin by string input
 var l = function(color, brightness) {
-  //sanity check brightness
-  brightness = Math.round(brightness);
+    //sanity check brightness
+    brightness = Math.round(brightness);
 
-  if(brightness > 256) {
-    brightness = 256;
-  } else if(brightness < 1) {
-    brightness = 1;
-  }
+    if (brightness > 256) {
+        brightness = 256;
+    } else if (brightness < 1) {
+        brightness = 1;
+    }
 
     switch (color) {
+        case 0:
         case 'r':
             pi.softPwmWrite(rPin, brightness);
             break;
 
+        case 1:
         case 'g':
             pi.softPwmWrite(gPin, brightness);
             break;
 
+        case 2:
         case 'b':
             pi.softPwmWrite(bPin, brightness);
             break;
@@ -101,13 +104,23 @@ var setColors = function(rValue, gValue, bValue) {
 };
 
 var fade = function(color) {
-    setAllColors(0);
-    for (var i = 0; i < 100; i++) {
-        setColors(color.r*i, color.g*i, color.b*i);
-        pi.delay(10);
-    }
-    for (var h = 100; h > 0; h--) {
-        setColors(color.r/i, color.g/i, color.b/i);
+    setColors(color.r, color.g, color.b);
+
+    var tempColors = [color.r, color.g, color.b];
+    var targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
+
+    for (var i = 0; i < 300; i++) {
+        tempColors.forEach(function(e, i, a) {
+          if(e < targets[i]) {
+            ++e;
+          } else if(e > targets[i]) {
+            --e;
+          } else if(e == targets[i]) {
+            targets[i] = Math.floor(Math.random() * (256 - 1)) + 1;
+          }
+          l(i, e);
+        });
+        setColors(color.r * i, color.g * i, color.b * i);
         pi.delay(10);
     }
     still();
