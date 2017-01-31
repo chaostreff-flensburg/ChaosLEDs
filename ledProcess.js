@@ -1,5 +1,5 @@
 var pi = require('wiring-pi');
-var connected = pi.wiringPiSetupGpio();
+pi.wiringPiSetupGpio();
 
 //set pins
 const rPin = 2;
@@ -24,25 +24,22 @@ pi.softPwmWrite(bPin, b);
 process.on('message', function(msg) {
     console.log(msg);
 
-    //check if gpio is connected
-    if(connected) {
-      switch (msg.function) {
-          case 'setColors':
-              setColors(parseInt(msg.r), parseInt(msg.g), parseInt(msg.b));
-              break;
+    switch (msg.function) {
+        case 'setColors':
+            setColors(msg.r, msg.g, msg.b);
+            break;
 
-          case 'blink':
-              blink(msg.color);
-              break;
+        case 'blink':
+            blink(msg.color);
+            break;
 
-          case 'fade':
-              fade(msg.color);
-              break;
+        case 'fade':
+            fade(msg.color);
+            break;
 
-          case 'setAllColors':
-              setAllColors(parseInt(msg.color));
-              break;
-      }
+        case 'setAllColors':
+            setAllColors(parseInt(msg.color));
+            break;
     }
 });
 
