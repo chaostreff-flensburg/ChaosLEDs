@@ -57,6 +57,8 @@ process.on("SIGTERM", function() {
 //function which chooses the correct pin by string input
 var l = function(color, brightness) {
   //sanity check brightness
+  brightness = Math.round(brightness);
+
   if(brightness > 256) {
     brightness = 256;
   } else if(brightness < 1) {
