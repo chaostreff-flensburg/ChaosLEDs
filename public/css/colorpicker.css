@@ -1,6 +1,8 @@
 .colorpicker {
 	width: 216px;
 	height: 176px;
+	margin-left: auto;
+	margin-right: auto;
 	overflow: none;
 	position: absolute;
 	background: url(../images/colorpicker_background.png);
