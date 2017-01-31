@@ -57,9 +57,9 @@ app.use(router);
 // ====================
 // Socket.io
 // ====================
-var r = '100';
-var g = '100';
-var b = '100';
+var r = 100;
+var g = 100;
+var b = 100;
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
@@ -200,54 +200,28 @@ io.on('connection', function(socket) {
     });
 
     //handle incoming values
-    socket.on('r', function(msg) {
+    socket.on('color', function(msg) {
         //only process input from currently controlling socket
         if (socket.id === controllingSocket) {
-            socket.broadcast.emit('r', msg);
+            socket.broadcast.emit('color', {
+              'r': r,
+              'g': g,
+              'b': b
+            });
             //console.log('R Value: ' + msg);
-            r = msg;
+            r = msg.r;
+            g = msg.g;
+            b = msg.b;
 
             //send current rgb values to led process
+            /*
             led.send({
                 'function': 'setColors',
                 'r': r,
                 'g': g,
                 'b': b
             });
-        }
-    });
-
-    socket.on('g', function(msg) {
-
-        if (socket.id === controllingSocket) {
-            socket.broadcast.emit('g', msg);
-            //console.log('G Value: ' + msg);
-            g = msg;
-
-            //send current rgb values to led process
-            led.send({
-                'function': 'setColors',
-                'r': r,
-                'g': g,
-                'b': b
-            });
-        }
-    });
-
-    socket.on('b', function(msg) {
-
-        if (socket.id === controllingSocket) {
-            socket.broadcast.emit('b', msg);
-            //console.log('B Value: ' + msg);
-            b = msg;
-
-            //send current rgb values to led process
-            led.send({
-                'function': 'setColors',
-                'r': r,
-                'g': g,
-                'b': b
-            });
+            */
         }
     });
 

@@ -1,47 +1,78 @@
 <html>
 
 <body>
-    <script src="/socket.io.min.js"></script>
+    <script src="/js/socket.io.min.js"></script>
+    <script src="/js/jscolor.min.js"></script>
+    <link rel="stylesheet" href="css/colorpicker.css" type="text/css" />
+    <link rel="stylesheet" media="screen" type="text/css" href="css/layout.css" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/colorpicker.js"></script>
+    <script type="text/javascript" src="js/eye.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/layout.js?ver=1.0.2"></script>
+
     <script>
         var socket = io();
         var controlling = false;
         var waitingTime = 0;
         const checkupTime = 1000;
+
+        var r, g, b = 100;
     </script>
     <div id="controlInfo">No connection to Host</div>
+
+    <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+    <script type="text/javascript" src="js/colorpicker.js"></script>
+
+    <p id="colorpickerHolder" class="controlElement">
+    </p>
+    <script>
+        $('#colorpickerHolder').ColorPicker({
+            flat: true,
+            onChange: function(hsb, hex, rgb) {
+                setColor(rgb);
+            }
+        });
+    </script>
+<!--
     <div>
-        Red<br> 0 <input id="rValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('r', this.value)}" /> 100
+        Red<br> 0 <input id="rValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {setColor('r', this.value)}" /> 100
     </div>
     <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'r')}">
     <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'r')}">
     <br/>
 
     <div>
-        Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('g', this.value)}" /> 100
+        Green<br> 0 <input id="gValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {setColor('g', this.value)}" /> 100
     </div>
     <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'g')}">
     <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'g')}">
     <br/>
 
     <div>
-        Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {socket.emit('b', this.value)}" /> 100
+        Blue<br> 0 <input id="bValue" type="range" min="0" max="100" step="1" value="100" oninput="if(controlling) {setColor('b', this.value)}" /> 100
     </div>
     <input class="controlElement" type="button" value="Blink" onclick="{socket.emit('blinkSingleColor', 'b')}">
     <input class="controlElement" type="button" value="Fade" onclick="{socket.emit('singleFade', 'b')}">
     <br/>
-
+-->
     <script>
         var rSlider = document.getElementById('rValue');
         var gSlider = document.getElementById('gValue');
         var bSlider = document.getElementById('bValue');
         var controlElements = document.getElementsByClassName('controlElement');
 
-        var controlInfo = document.getElementById('controlInfo')
+        var controlInfo = document.getElementById('controlInfo');
+
+        var setColor = function(rgb) {
+            socket.emit('color', {
+                'r': rgb.r,
+                'g': rgb.g,
+                'b': rgb.b
+            });
+        }
 
         var toggleControlElements = function(control) {
-            rSlider.disabled = !control;
-            gSlider.disabled = !control;
-            bSlider.disabled = !control;
             controlElements.disabled = !control;
         }
 
@@ -65,21 +96,23 @@
                 controlInfo.textContent = "Du kontrollierst die Chaos-Leds! Tob dich aus!";
             } else {
                 //check if waiting time is still correct, if not, change it
-                if (waitingTime !== msg.waitingTime) {
+                if (waitingTime !== msg.waitingTime && msg.waitingTime != "NaN") {
                     waitingTime = Math.floor(msg.waitingTime / 1000);
                 }
             }
         });
 
         //transmit slider values if user is controlling
-        socket.on('r', function(msg) {
-            rSlider.value = msg;
-        });
-        socket.on('g', function(msg) {
-            gSlider.value = msg;
-        });
-        socket.on('b', function(msg) {
-            bSlider.value = msg;
+        socket.on('color', function(msg) {
+            rSlider.value = msg.r;
+            gSlider.value = msg.g;
+            bSlider.value = msg.b;
+
+            $('#colorpickerHolder').ColorPickerSetColor(msg);
+
+            r = msg.r;
+            g = msg.g;
+            b = msg.b;
         });
 
         //if client is not controlling, periodically check if control has been given to client
