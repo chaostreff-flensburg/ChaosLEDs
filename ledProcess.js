@@ -110,17 +110,17 @@ var fade = function(color) {
     var targets = [Math.floor(Math.random() * (256 - 100)) + 100, Math.floor(Math.random() * (256 - 100)) + 100, Math.floor(Math.random() * (256 - 100)) + 100];
 
     for (var i = 0; i < 300; i++) {
-        tempColors.forEach(function(e, index, a) {
-          if(e < targets[index]) {
+        for(var h = 0; h < tempColors.length; h++) {
+          if(e < targets[h]) {
             ++e;
-          } else if(e > targets[index]) {
+          } else if(e > targets[h]) {
             --e;
-          } else if(e == targets[index]) {
-            targets[index] = Math.floor(Math.random() * (256 - 100)) + 100;
+          } else if(e == targets[h]) {
+            targets[h] = Math.floor(Math.random() * (256 - 100)) + 100;
           }
           console.log(e);
-          l(index, e);
-        });
+          l(h, e);
+        }
         pi.delay(10);
     }
     still();
