@@ -123,6 +123,7 @@ var fade = function(color) {
         }
         pi.delay(10);
     }
+    setColors(r, g, b);
     still();
 };
 
