@@ -107,7 +107,7 @@ var fade = function(color) {
     setColors(color.r, color.g, color.b);
 
     var tempColors = [color.r, color.g, color.b];
-    var targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
+    var targets = [Math.floor(Math.random() * (256 - 100)) + 100, Math.floor(Math.random() * (256 - 100)) + 100, Math.floor(Math.random() * (256 - 100)) + 100];
 
     for (var i = 0; i < 300; i++) {
         tempColors.forEach(function(e, i, a) {
@@ -116,7 +116,7 @@ var fade = function(color) {
           } else if(e > targets[i]) {
             --e;
           } else if(e == targets[i]) {
-            targets[i] = Math.floor(Math.random() * (256 - 1)) + 1;
+            targets[i] = Math.floor(Math.random() * (256 - 100)) + 100;
           }
           l(i, e);
         });
