@@ -120,7 +120,6 @@ var fade = function(color) {
           }
           l(i, e);
         });
-        setColors(color.r * i, color.g * i, color.b * i);
         pi.delay(10);
     }
     still();
