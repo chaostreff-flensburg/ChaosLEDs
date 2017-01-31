@@ -31,16 +31,16 @@ process.on('message', function(msg) {
               setColors(parseInt(msg.r), parseInt(msg.g), parseInt(msg.b));
               break;
 
-          case 'blinkSingleColor':
-              blinkSingleColor(msg.color);
+          case 'blink':
+              blink(msg.color);
               break;
 
-          case 'singleFade':
-              singleFade(msg.color);
+          case 'fade':
+              fade(msg.color);
               break;
 
           case 'setAllColors':
-              setAllColors(parseInt(msg.brightness));
+              setAllColors(parseInt(msg.color));
               break;
       }
     }
@@ -96,24 +96,24 @@ var setColors = function(rValue, gValue, bValue) {
     still();
 };
 
-var singleFade = function(color) {
+var fade = function(color) {
     setAllColors(0);
     for (var i = 0; i < 100; i++) {
-        l(color, i);
+        setColors(color.r*i, color.g*i, color.b*i);
         pi.delay(10);
     }
     for (var h = 100; h > 0; h--) {
-        l(color, h);
+        setColors(color.r/i, color.g/i, color.b/i);
         pi.delay(10);
     }
     still();
 };
 
-var blinkSingleColor = function(color) {
+var blink = function(color) {
     setAllColors(0);
     for (var i = 0; i < 2; i++) {
         pi.delay(300);
-        l(color, 100);
+        setColors(color.r, color.g, color.b);
         pi.delay(300);
         l(color, 0);
     }

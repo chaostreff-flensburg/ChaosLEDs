@@ -26,6 +26,8 @@
 
     <p id="colorpickerHolder" class="controlElement"></p>
 
+    <input class="controlElement" type="button" value="Fade" onclick="socket.emit('function', {'function' : 'fade', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
+
     <script>
         //add colorpicker
         $('#colorpickerHolder').ColorPicker({

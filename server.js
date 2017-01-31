@@ -225,23 +225,9 @@ io.on('connection', function(socket) {
         }
     });
 
-    socket.on('singleFade', function(msg) {
+    socket.on('function', function(msg) {
       led.send({
-          'function': 'singleFade',
-          'color': msg
-      });
-    });
-
-    socket.on('blinkSingleColor', function(msg) {
-      led.send({
-          'function': 'blinkSingleColor',
-          'color': msg
-      });
-    });
-
-    socket.on('setAllColors', function(msg) {
-      led.send({
-          'function': 'blinkSingleColor',
+          'function': msg.function,
           'color': msg.color
       });
     });
