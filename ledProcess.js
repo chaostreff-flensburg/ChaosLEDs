@@ -118,6 +118,7 @@ var fade = function(color) {
           } else if(e == targets[i]) {
             targets[i] = Math.floor(Math.random() * (256 - 100)) + 100;
           }
+          console.log(e);
           l(i, e);
         });
         pi.delay(10);
