@@ -111,15 +111,15 @@ var fade = function(color) {
 
     for (var i = 0; i < 300; i++) {
         for(var h = 0; h < tempColors.length; h++) {
-          if(e < targets[h]) {
-            ++e;
-          } else if(e > targets[h]) {
-            --e;
-          } else if(e == targets[h]) {
+          if(tempColors[h] < targets[h]) {
+            ++tempColors[h];
+          } else if(tempColors[h] > targets[h]) {
+            --tempColors[h];
+          } else if(tempColors[h] == targets[h]) {
             targets[h] = Math.floor(Math.random() * (256 - 100)) + 100;
           }
-          console.log(e);
-          l(h, e);
+          console.log(tempColors[h]);
+          l(h, tempColors[h]);
         }
         pi.delay(10);
     }
