@@ -56,6 +56,13 @@ process.on("SIGTERM", function() {
 
 //function which chooses the correct pin by string input
 var l = function(color, brightness) {
+  //sanity check brightness
+  if(brightness > 256) {
+    brightness = 256;
+  } else if(brightness < 1) {
+    brightness = 1;
+  }
+
     switch (color) {
         case 'r':
             pi.softPwmWrite(rPin, brightness);
