@@ -1,5 +1,4 @@
 var pi = require('wiring-pi');
-pi.wiringPiSetupGpio();
 
 //set pins
 const rPin = 2;
@@ -11,6 +10,9 @@ var r = 0;
 var g = 0;
 var b = 0;
 
+//init GPIO's
+pi.wiringPiSetupGpio();
+
 pi.softPwmCreate(rPin, 100, 100);
 pi.softPwmCreate(gPin, 100, 100);
 pi.softPwmCreate(bPin, 100, 100);
@@ -19,10 +21,13 @@ pi.softPwmWrite(rPin, r);
 pi.softPwmWrite(gPin, g);
 pi.softPwmWrite(bPin, b);
 
+/* ---------- LED FUNCTIONS ------------- */
 
-//receive signal from parent
-process.on('message', function(msg) {
-    console.log(msg);
+//STATE GENERATOR
+
+var LEDController = function*() {
+  while(true) {
+    var msg = yield;
 
     switch (msg.function) {
         case 'setColors':
@@ -41,16 +46,10 @@ process.on('message', function(msg) {
             setAllColors(parseInt(msg.color));
             break;
     }
-});
+  }
+};
 
-//kill child process with parent
-process.on("SIGTERM", function() {
-    console.log("Parent SIGTERM detected");
-    // exit cleanly
-    process.exit();
-});
-
-/* ---------- LED FUNCTIONS ------------- */
+var led = new LEDController();
 
 // SYSTEM FUNCTIONS
 
@@ -106,11 +105,11 @@ var setColors = function(rValue, gValue, bValue) {
 var fade = function(color) {
     setColors(color.r, color.g, color.b);
 
-    var tempColors = [color.r, color.g, color.b];
-    var targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
+    let tempColors = [color.r, color.g, color.b];
+    let targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
 
-    for (var i = 0; i < 300; i++) {
-        for(var h = 0; h < tempColors.length; h++) {
+    for (let i = 0; i < 300; i++) {
+        for(let h = 0; h < tempColors.length; h++) {
           if(tempColors[h] < targets[h]) {
             ++tempColors[h];
           } else if(tempColors[h] > targets[h]) {
@@ -138,3 +137,20 @@ var blink = function(color) {
     setColors(color.r, color.g, color.b);
     still();
 };
+
+/* ------------ EVENT HANDLING ---------- */
+
+//receive signal from parent
+process.on('message', function(msg) {
+    console.log(msg);
+
+    //send message to led controller
+    led.next(msg);
+});
+
+//kill child process with parent
+process.on("SIGTERM", function() {
+    console.log("Parent SIGTERM detected");
+    // exit cleanly
+    process.exit();
+});
