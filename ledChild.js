@@ -42,8 +42,8 @@ process.on('message', function(msg) {
 });
 
 //kill child process
-process.on("SIGKILL", function() {
-    console.log("Master SIGKILL detected");
+process.on("SIGTERM", function() {
+    console.log("Master SIGTERM detected");
     // exit cleanly
     process.exit();
 });
