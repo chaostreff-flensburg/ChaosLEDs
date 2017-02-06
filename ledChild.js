@@ -82,6 +82,12 @@ var fade = function(color) {
     let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
     while (true) {
+      //kill child process
+      process.on("SIGTERM", function() {
+          console.log("Master SIGTERM detected");
+          // exit cleanly
+          process.exit();
+      });
         for (let h = 0; h < tempColors.length; h++) {
             if (tempColors[h] < targets[h]) {
                 ++tempColors[h];
