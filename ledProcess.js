@@ -29,7 +29,7 @@ if (cluster.isMaster) {
             //kill worker and create new one if function is different
             if (msg.function !== state.function) {
               console.log("Killing last worker...");
-                worker.kill();
+                worker.kill('SIGKILL');
                 worker = cluster.fork();
             }
 
@@ -140,7 +140,7 @@ if (cluster.isWorker) {
                   // exit cleanly
                   process.exit();
               });
-              
+
             for (let h = 0; h < tempColors.length; h++) {
                 if (tempColors[h] < targets[h]) {
                     ++tempColors[h];
