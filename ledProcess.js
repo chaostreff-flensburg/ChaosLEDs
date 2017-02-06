@@ -9,7 +9,7 @@ const bPin = 4;
 var state = {
     'function': 'setColor',
     'rgb': rgb
-}
+};
 
 ////////////////
 //// MASTER ////
@@ -102,21 +102,15 @@ if (cluster.isWorker) {
 
     //set lights by global rgb values
     var l = function(...rgb) {
-      console.log(arguments);
         //check if arguments are set
-        for (let i = 0; i <= 2; i++) {
-          console.log(arguments[0][i]);
-            if (arguments[0][i] !== "undefined") {
-                //set new rgb value and scale it from 0 - 255 to 0 - 100
-                rgb[i] = arguments[0][i] / 255 * 100;
-                console.log(rgb[i]);
-            }
+        if (arguments[0] !== "undefined") {
+            rgb = [rgb.r, rgb.g, rgb.b];
         }
-
-        console.dir(rgb);
 
         //sanity check and map rgb values
         rgb = rgb.map(function(e) {
+            //scale it from 0 - 255 to 0 - 100
+            e = e / 255 * 100;
             e = Math.round(e);
             if (e > 100) {
                 e = 100;
