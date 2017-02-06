@@ -81,20 +81,22 @@ if (cluster.isWorker) {
             case 'setColors':
                 l(msg.rgb);
                 break;
-                /*
-                case 'blink':
-                    blink(msg.rgb);
-                    break;
 
-                case 'fade':
-                    fade(msg.rgb);
-                    break;
-                    */
+            case 'blink':
+                blink(msg.rgb);
+                break;
+
+            case 'fade':
+                fade(msg.rgb);
+                break;
+
         }
     });
 
     //kill worker with parent
     process.on("SIGTERM", function() {
+        //set color to old value
+        l(rgb);
         console.log("Worker shutting down...");
         // exit cleanly
         process.exit();
@@ -126,14 +128,14 @@ if (cluster.isWorker) {
         pi.softPwmWrite(bPin, rgb[2]);
     };
 
-    /*
+
     var fade = function(color) {
-        setColors(color.r, color.g, color.b);
+        l(color);
 
         let tempColors = [color.r, color.g, color.b];
-        let targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
+        let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
-        for (let i = 0; i < 300; i++) {
+        while (true) {
             for (let h = 0; h < tempColors.length; h++) {
                 if (tempColors[h] < targets[h]) {
                     ++tempColors[h];
@@ -143,24 +145,21 @@ if (cluster.isWorker) {
                     targets[h] = Math.floor(Math.random() * (256 - 1)) + 1;
                 }
                 console.log(tempColors[h]);
-                l(h, tempColors[h]);
+                pi.softPwmWrite(rPin, tempColors[h]);
             }
             pi.delay(10);
         }
-        setColors(r, g, b);
-        still();
     };
 
     var blink = function(color) {
-        setAllColors(1);
-        for (var i = 0; i < 2; i++) {
+        l(color);
+        while(true) {
             pi.delay(300);
-            setColors(color.r, color.g, color.b);
+            l(color);
             pi.delay(300);
-            setAllColors(1);
+            rgb = [0, 0, 0];
+            l();
         }
-        setColors(color.r, color.g, color.b);
-        still();
     };
-    */
+
 }
