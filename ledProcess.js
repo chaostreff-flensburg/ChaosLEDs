@@ -28,7 +28,8 @@ if (cluster.isMaster) {
 
             //kill worker and create new one if function is different
             if (msg.function !== state.function) {
-                worker.kill();
+              console.log("Killing last worker...");
+                worker.process.kill();
                 worker = cluster.fork();
             }
 
@@ -54,6 +55,8 @@ if (cluster.isMaster) {
     //kill child process with parent
     process.on("SIGTERM", function() {
         console.log("Parent SIGTERM detected");
+        //kill all workers
+        cluster.disconnect();
         // exit cleanly
         process.exit();
     });
