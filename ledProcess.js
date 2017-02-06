@@ -6,9 +6,6 @@ const rPin = 2;
 const gPin = 3;
 const bPin = 4;
 
-//pwm values
-var rgb = [0, 0, 0];
-
 var state = {
     'function': 'setColor',
     'rgb': rgb
@@ -66,6 +63,9 @@ if (cluster.isMaster) {
 
 if (cluster.isWorker) {
     const pi = require('wiring-pi');
+
+    //pwm values
+    var rgb = [0, 0, 0];
 
     //init GPIO's
     pi.wiringPiSetupGpio();
