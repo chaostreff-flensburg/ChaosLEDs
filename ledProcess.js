@@ -104,7 +104,7 @@ if (cluster.isWorker) {
     var l = function(...rgb) {
         //check if arguments are set
         if (arguments[0] !== "undefined") {
-            rgb = [rgb.r, rgb.g, rgb.b];
+            rgb = [arguments[0].r, arguments[0].g, arguments[0].b];
         }
 
         console.dir(rgb);
