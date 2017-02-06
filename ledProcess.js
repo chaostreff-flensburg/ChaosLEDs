@@ -105,7 +105,8 @@ if (cluster.isWorker) {
         //check if arguments are set
         for (let i = 0; i <= 2; i++) {
             if (arguments[0][i] !== "undefined") {
-                rgb[i] = arguments[0][i];
+                //set new rgb value and scale it from 0 - 255 to 0 - 100
+                rgb[i] = arguments[0][i] / 255 * 100;
             }
         }
 
