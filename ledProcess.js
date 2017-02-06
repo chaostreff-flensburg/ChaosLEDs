@@ -107,8 +107,6 @@ if (cluster.isWorker) {
             rgb = [arguments[0].r, arguments[0].g, arguments[0].b];
         }
 
-        console.dir(rgb);
-
         //sanity check and map rgb values
         rgb = rgb.map(function(e) {
             //scale it from 0 - 255 to 0 - 100
@@ -122,7 +120,7 @@ if (cluster.isWorker) {
 
             return e;
         });
-
+        console.dir(rgb);
         pi.softPwmWrite(rPin, rgb[0]);
         pi.softPwmWrite(gPin, rgb[1]);
         pi.softPwmWrite(bPin, rgb[2]);
