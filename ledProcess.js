@@ -110,6 +110,8 @@ if (cluster.isWorker) {
             }
         }
 
+        console.dir(rgb);
+
         //sanity check and map rgb values
         rgb = rgb.map(function(e) {
             e = Math.round(e);
