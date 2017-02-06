@@ -29,7 +29,7 @@ if (cluster.isMaster) {
             //kill worker and create new one if function is different
             if (msg.function !== state.function) {
               console.log("Killing last worker...");
-                cluster.disconnect();
+                worker.kill();
                 worker = cluster.fork();
             }
 
@@ -98,14 +98,6 @@ if (cluster.isWorker) {
         }
     });
 
-    //kill worker with parent
-    process.on("SIGTERM", function() {
-        //set color to old value
-        console.log("Worker shutting down...");
-        // exit cleanly
-        process.exit();
-    });
-
     //set lights by global rgb values
     var l = function(...rgb) {
         //check if arguments are set
@@ -140,6 +132,15 @@ if (cluster.isWorker) {
         let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
         while (true) {
+
+              //kill worker with parent
+              process.on("SIGTERM", function() {
+                  //set color to old value
+                  console.log("Worker shutting down...");
+                  // exit cleanly
+                  process.exit();
+              });
+              
             for (let h = 0; h < tempColors.length; h++) {
                 if (tempColors[h] < targets[h]) {
                     ++tempColors[h];
