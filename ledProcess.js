@@ -29,7 +29,7 @@ if (cluster.isMaster) {
             //kill worker and create new one if function is different
             if (msg.function !== state.function) {
               console.log("Killing last worker...");
-                worker.process.kill();
+                worker.kill();
                 worker = cluster.fork();
             }
 
