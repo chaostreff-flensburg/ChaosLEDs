@@ -107,6 +107,8 @@ if (cluster.isWorker) {
             rgb = [rgb.r, rgb.g, rgb.b];
         }
 
+        console.dir(rgb);
+
         //sanity check and map rgb values
         rgb = rgb.map(function(e) {
             //scale it from 0 - 255 to 0 - 100
