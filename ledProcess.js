@@ -25,13 +25,15 @@ if (cluster.isMaster) {
         let worker = cluster.fork();
         while (true) {
             let msg = yield;
-            state = msg;
 
             //kill worker and create new one if function is different
             if (msg.function !== state.function) {
                 worker.kill();
                 worker = cluster.fork();
             }
+
+            //save last state
+            state = msg;
 
             worker.send(state);
         }
