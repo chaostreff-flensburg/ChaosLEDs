@@ -17,9 +17,7 @@
         var waitingTime = 0;
         const checkupTime = 1000;
 
-        var r = 100;
-        var g = 100;
-        var b = 100;
+        var rgb = [0, 0, 0];
     </script>
     <div id="controlInfo">No connection to Host</div>
 
@@ -28,9 +26,8 @@
 
     <p id="colorpickerHolder" class="controlElement"></p>
 
-    <input class="controlElement" type="button" value="Fade" onclick="socket.emit('function', {'function' : 'fade', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
-    <input class="controlElement" type="button" value="Blink" onclick="socket.emit('function', {'function' : 'blink', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
-
+    <input class="controlElement" type="button" value="Fade" onclick="socket.emit('function', {'function' : 'fade', 'rgb' : rgb});">
+    <input class="controlElement" type="button" value="Blink" onclick="socket.emit('function', {'function' : 'blink',  'rgb' : rgb});">
     <script>
         //add colorpicker
         $('#colorpickerHolder').ColorPicker({
@@ -45,11 +42,7 @@
         var controlInfo = document.getElementById('controlInfo');
 
         var setColor = function(rgb) {
-            socket.emit('color', {
-                'r': rgb.r,
-                'g': rgb.g,
-                'b': rgb.b
-            });
+            socket.emit('color', {'rgb': rgb});
         }
 
         var toggleControlElements = function(control) {
@@ -84,9 +77,7 @@
         socket.on('color', function(msg) {
             $('#colorpickerHolder').ColorPickerSetColor(msg);
 
-            r = msg.r;
-            g = msg.g;
-            b = msg.b;
+            rgb = msg.rgb;
         });
 
         //if client is not controlling, periodically check if control has been given to client

@@ -57,9 +57,7 @@ app.use(router);
 // ====================
 // Socket.io
 // ====================
-var r = 100;
-var g = 100;
-var b = 100;
+var rgb = [0, 0, 0];
 var controllingSocket = "";
 var controllingTimestamp = 0;
 var waitingSockets = [];
@@ -157,9 +155,7 @@ io.on('connection', function(socket) {
 
     //send initial values to new user
     socket.emit('initialize', {
-        'r': r,
-        'g': g,
-        'b': b
+        'rgb' : rgb
     });
 
     //let clients check if the controller has changed
@@ -204,21 +200,15 @@ io.on('connection', function(socket) {
         //only process input from currently controlling socket
         if (socket.id === controllingSocket) {
             socket.broadcast.emit('color', {
-              'r': r,
-              'g': g,
-              'b': b
+              'rgb' : msg.rgb
             });
             //console.log('R Value: ' + msg);
-            r = msg.r;
-            g = msg.g;
-            b = msg.b;
+            rgb = msg.rgb;
 
             //send current rgb values to led process
             led.send({
                 'function': 'setColors',
-                'r': r,
-                'g': g,
-                'b': b
+                'rgb': msg.rgb
             });
         }
     });
@@ -226,7 +216,7 @@ io.on('connection', function(socket) {
     socket.on('function', function(msg) {
       led.send({
           'function': msg.function,
-          'color': msg.color
+          'color': msg.rgb
       });
     });
 });

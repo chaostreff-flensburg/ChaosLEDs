@@ -1,4 +1,5 @@
-var pi = require('wiring-pi');
+const numCPUs = require('os').cpus().length;
+const cluster = require('cluster');
 
 //set pins
 const rPin = 2;
@@ -6,151 +7,160 @@ const gPin = 3;
 const bPin = 4;
 
 //pwm values
-var r = 0;
-var g = 0;
-var b = 0;
+var rgb = [0, 0, 0];
 
-//init GPIO's
-pi.wiringPiSetupGpio();
+var state = {
+    'function': 'setColor',
+    'rgb': rgb
+}
 
-pi.softPwmCreate(rPin, 100, 100);
-pi.softPwmCreate(gPin, 100, 100);
-pi.softPwmCreate(bPin, 100, 100);
+////////////////
+//// MASTER ////
+////////////////
 
-pi.softPwmWrite(rPin, r);
-pi.softPwmWrite(gPin, g);
-pi.softPwmWrite(bPin, b);
+if (cluster.isMaster) {
 
-/* ---------- LED FUNCTIONS ------------- */
+    /* ---------- LED WORKER HANDLER ------------- */
 
-//STATE GENERATOR
+    //STATE GENERATOR
 
-var LEDController = function*() {
-  while(true) {
-    var msg = yield;
+    let LEDController = function*() {
+        let worker = cluster.fork();
+        while (true) {
+            let msg = yield;
 
-    switch (msg.function) {
-        case 'setColors':
-            setColors(msg.r, msg.g, msg.b);
-            break;
 
-        case 'blink':
-            blink(msg.color);
-            break;
+            //kill worker and create new one if function is different
+            if (msg.function !== state.function) {
+                worker.kill('SIGTERM');
+                worker = cluster.fork();
+            }
 
-        case 'fade':
-            fade(msg.color);
-            break;
-
-        case 'setAllColors':
-            setAllColors(parseInt(msg.color));
-            break;
-    }
-  }
-};
-
-var led = new LEDController();
-
-// SYSTEM FUNCTIONS
-
-//function which chooses the correct pin by string input
-var l = function(color, brightness) {
-    //sanity check brightness
-    brightness = Math.round(brightness);
-
-    if (brightness > 256) {
-        brightness = 256;
-    } else if (brightness < 1) {
-        brightness = 1;
-    }
-
-    switch (color) {
-        case 0:
-        case 'r':
-            pi.softPwmWrite(rPin, brightness);
-            break;
-
-        case 1:
-        case 'g':
-            pi.softPwmWrite(gPin, brightness);
-            break;
-
-        case 2:
-        case 'b':
-            pi.softPwmWrite(bPin, brightness);
-            break;
-
-        default:
-    }
-};
-
-var setAllColors = function(brightness) {
-    setColors(brightness, brightness, brightness);
-};
-
-var still = function() {
-    l('r', r);
-    l('g', g);
-    l('b', b);
-};
-
-var setColors = function(rValue, gValue, bValue) {
-    r = rValue;
-    g = gValue;
-    b = bValue;
-
-    still();
-};
-
-var fade = function(color) {
-    setColors(color.r, color.g, color.b);
-
-    let tempColors = [color.r, color.g, color.b];
-    let targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
-
-    for (let i = 0; i < 300; i++) {
-        for(let h = 0; h < tempColors.length; h++) {
-          if(tempColors[h] < targets[h]) {
-            ++tempColors[h];
-          } else if(tempColors[h] > targets[h]) {
-            --tempColors[h];
-          } else if(tempColors[h] == targets[h]) {
-            targets[h] = Math.floor(Math.random() * (256 - 1)) + 1;
-          }
-          console.log(tempColors[h]);
-          l(h, tempColors[h]);
+            worker.send(state);
         }
-        pi.delay(10);
-    }
-    setColors(r, g, b);
-    still();
-};
+    };
 
-var blink = function(color) {
-    setAllColors(1);
-    for (var i = 0; i < 2; i++) {
-        pi.delay(300);
+    let led = LEDController();
+
+    /* ------------ EVENT HANDLING ---------- */
+
+    //receive signal from parent
+    process.on('message', function(msg) {
+        console.log(msg);
+
+        //send message to led controller
+        led.next(msg);
+    });
+
+    //kill child process with parent
+    process.on("SIGTERM", function() {
+        console.log("Parent SIGTERM detected");
+        // exit cleanly
+        process.exit();
+    });
+
+}
+////////////////
+//// WORKER ////
+////////////////
+
+if (cluster.isWorker) {
+    const pi = require('wiring-pi');
+
+    //init GPIO's
+    pi.wiringPiSetupGpio();
+
+    pi.softPwmCreate(rPin, 100, 100);
+    pi.softPwmCreate(gPin, 100, 100);
+    pi.softPwmCreate(bPin, 100, 100);
+
+    /* ----------- HANDLE MASTER COMMUNICATION ------ */
+
+    process.on('message', function(msg) {
+        switch (msg.function) {
+            case 'setColors':
+                l(msg.rgb);
+                break;
+                /*
+                case 'blink':
+                    blink(msg.rgb);
+                    break;
+
+                case 'fade':
+                    fade(msg.rgb);
+                    break;
+                    */
+        }
+    });
+
+    //kill worker with parent
+    process.on("SIGTERM", function() {
+        console.log("Worker shutting down...");
+        // exit cleanly
+        process.exit();
+    });
+
+    //set lights by global rgb values
+    var l = function(...rgb) {
+        //check if arguments are set
+        for (let i = 0; i <= 2; i++) {
+            if (arguments[0][i] !== "undefined") {
+                rgb[i] = arguments[0][i];
+            }
+        }
+
+        //sanity check and map rgb values
+        rgb = rgb.map(function(e) {
+            e = Math.round(e);
+            if (e > 100) {
+                e = 100;
+            } else if (e < 1) {
+                e = 1;
+            }
+
+            return e;
+        });
+
+        pi.softPwmWrite(rPin, rgb[0]);
+        pi.softPwmWrite(gPin, rgb[1]);
+        pi.softPwmWrite(bPin, rgb[2]);
+    };
+
+    /*
+    var fade = function(color) {
         setColors(color.r, color.g, color.b);
-        pi.delay(300);
+
+        let tempColors = [color.r, color.g, color.b];
+        let targets = [Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1, Math.floor(Math.random() * (256 - 1)) + 1];
+
+        for (let i = 0; i < 300; i++) {
+            for (let h = 0; h < tempColors.length; h++) {
+                if (tempColors[h] < targets[h]) {
+                    ++tempColors[h];
+                } else if (tempColors[h] > targets[h]) {
+                    --tempColors[h];
+                } else if (tempColors[h] == targets[h]) {
+                    targets[h] = Math.floor(Math.random() * (256 - 1)) + 1;
+                }
+                console.log(tempColors[h]);
+                l(h, tempColors[h]);
+            }
+            pi.delay(10);
+        }
+        setColors(r, g, b);
+        still();
+    };
+
+    var blink = function(color) {
         setAllColors(1);
-    }
-    setColors(color.r, color.g, color.b);
-    still();
-};
-
-/* ------------ EVENT HANDLING ---------- */
-
-//receive signal from parent
-process.on('message', function(msg) {
-    console.log(msg);
-
-    //send message to led controller
-    led.next(msg);
-});
-
-//kill child process with parent
-process.on("SIGTERM", function() {
-    console.log("Parent SIGTERM detected");
-    // exit cleanly
-    process.exit();
-});
+        for (var i = 0; i < 2; i++) {
+            pi.delay(300);
+            setColors(color.r, color.g, color.b);
+            pi.delay(300);
+            setAllColors(1);
+        }
+        setColors(color.r, color.g, color.b);
+        still();
+    };
+    */
+}
