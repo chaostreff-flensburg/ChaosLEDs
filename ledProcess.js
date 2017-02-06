@@ -104,9 +104,11 @@ if (cluster.isWorker) {
     var l = function(...rgb) {
         //check if arguments are set
         for (let i = 0; i <= 2; i++) {
+          console.log(arguments[0][i]);
             if (arguments[0][i] !== "undefined") {
                 //set new rgb value and scale it from 0 - 255 to 0 - 100
                 rgb[i] = arguments[0][i] / 255 * 100;
+                console.log(rgb[i]);
             }
         }
 
