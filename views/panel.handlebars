@@ -17,7 +17,11 @@
         var waitingTime = 0;
         const checkupTime = 1000;
 
-        var rgb = [0, 0, 0];
+        var rgb = {
+            'r': 0,
+            'g': 0,
+            'b': 0
+        };
     </script>
     <div id="controlInfo">No connection to Host</div>
 
@@ -32,8 +36,9 @@
         //add colorpicker
         $('#colorpickerHolder').ColorPicker({
             flat: true,
-            onChange: function(hsb, hex, rgb) {
-                setColor(rgb);
+            onChange: function(hsb, hex, rgbValues) {
+                rgb = rgbValues;
+                setColor(rgbValues);
             }
         });
 
@@ -42,7 +47,9 @@
         var controlInfo = document.getElementById('controlInfo');
 
         var setColor = function(rgb) {
-            socket.emit('color', {'rgb': rgb});
+            socket.emit('color', {
+                'rgb': rgb
+            });
         }
 
         var toggleControlElements = function(control) {
