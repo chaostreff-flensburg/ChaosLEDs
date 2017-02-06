@@ -102,6 +102,7 @@ if (cluster.isWorker) {
 
     //set lights by global rgb values
     var l = function(...rgb) {
+      console.log(arguments);
         //check if arguments are set
         for (let i = 0; i <= 2; i++) {
           console.log(arguments[0][i]);
