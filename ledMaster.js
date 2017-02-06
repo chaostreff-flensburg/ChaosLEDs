@@ -21,7 +21,7 @@ let LEDController = function*() {
         //kill worker and create new one if function is different
         if (msg.function !== state.function) {
             console.log("Killing last child...");
-            child.kill('SIGKILL');
+            child.kill();
             child = cp.fork('ledChild.js');
         }
 
