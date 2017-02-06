@@ -216,7 +216,7 @@ io.on('connection', function(socket) {
     socket.on('function', function(msg) {
       led.send({
           'function': msg.function,
-          'color': msg.rgb
+          'rgb': msg.rgb
       });
     });
 });
