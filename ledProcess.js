@@ -101,7 +101,6 @@ if (cluster.isWorker) {
     //kill worker with parent
     process.on("SIGTERM", function() {
         //set color to old value
-        l(rgb);
         console.log("Worker shutting down...");
         // exit cleanly
         process.exit();
