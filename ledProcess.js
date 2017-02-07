@@ -29,7 +29,7 @@ if (cluster.isMaster) {
         //console.log(msg);
 
         //send message to led worker
-        fs.writeFileSync(file, JSON.stringify(msg));
+        fs.writeFile(file, JSON.stringify(msg));
     });
 
     //kill child process with parent
@@ -57,6 +57,10 @@ if (cluster.isWorker) {
 
     //pwm values
     var rgb = [0, 0, 0];
+
+    //fade values
+    let tempColors = [color.r, color.g, color.b];
+    let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
     //init GPIO's
     pi.wiringPiSetupGpio();
@@ -97,8 +101,6 @@ if (cluster.isWorker) {
 
 
     var fade = function(color) {
-        let tempColors = [color.r, color.g, color.b];
-        let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
         for (let h = 0; h < tempColors.length; h++) {
             if (tempColors[h] < targets[h]) {
@@ -121,7 +123,7 @@ if (cluster.isWorker) {
         l(color);
         pi.delay(300);
         rgb = [0, 0, 0];
-        l();
+        l(rgb);
 
         update();
     };
