@@ -28,9 +28,11 @@ if (cluster.isMaster) {
         //console.log(msg);
 
         //send message to led worker
-        fs.writeFileSync(file, JSON.stringify(msg), {
+        setTimeout(function() {
+                  fs.writeFileSync(file, JSON.stringify(msg), {
             'flag': 'w+'
         });
+      }, 1000/60);
 
         if (worker === null) {
             //create led worker
@@ -136,32 +138,26 @@ if (cluster.isWorker) {
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
     var update = function() {
-        setTimeout(function() {
-            //communication file
-            try {
+            setTimeout(function() {
+                //communication file
                 let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
-            } catch (e) {
-                let msg = {
-                    'function': ""
-                };
-            }
-            //console.log(msg);
+                console.log(msg);
 
-            switch (msg.function) {
-                case 'setColors':
-                    l(msg.rgb);
-                    break;
+                switch (msg.function) {
+                    case 'setColors':
+                        l(msg.rgb);
+                        break;
 
-                case 'blink':
-                    blink(msg.rgb);
-                    break;
+                    case 'blink':
+                        blink(msg.rgb);
+                        break;
 
-                case 'fade':
-                    fade();
-                    break;
+                    case 'fade':
+                        fade();
+                        break;
 
-            }
-        }, 1000 / 60);
+                }
+            }, 1000 / 60);
     };
 
     update();
