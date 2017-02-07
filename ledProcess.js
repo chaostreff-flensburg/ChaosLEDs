@@ -148,7 +148,7 @@ if (cluster.isWorker) {
                     break;
 
             }
-        }, 300);
+        }, 1000 / 60);
     };
 
     update();
