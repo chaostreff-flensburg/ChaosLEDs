@@ -59,7 +59,6 @@ if (cluster.isWorker) {
     var rgb = [0, 0, 0];
 
     //fade values
-    let tempColors = [color.r, color.g, color.b];
     let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
     //init GPIO's
@@ -100,18 +99,18 @@ if (cluster.isWorker) {
     };
 
 
-    var fade = function(color) {
+    var fade = function() {
 
-        for (let h = 0; h < tempColors.length; h++) {
-            if (tempColors[h] < targets[h]) {
-                ++tempColors[h];
-            } else if (tempColors[h] > targets[h]) {
-                --tempColors[h];
-            } else if (tempColors[h] == targets[h]) {
+        for (let h = 0; h < rgb.length; h++) {
+            if (rgb[h] < targets[h]) {
+                ++rgb[h];
+            } else if (rgb[h] > targets[h]) {
+                --rgb[h];
+            } else if (rgb[h] == targets[h]) {
                 targets[h] = Math.floor(Math.random() * (256 - 1)) + 1;
             }
-            console.log(tempColors[h]);
-            pi.softPwmWrite(rPin, tempColors[h]);
+            console.log(rgb[h]);
+            pi.softPwmWrite(rPin, rgb[h]);
         }
         pi.delay(10);
 
@@ -146,7 +145,7 @@ if (cluster.isWorker) {
                     break;
 
                 case 'fade':
-                    fade(msg.rgb);
+                    fade();
                     break;
 
             }
