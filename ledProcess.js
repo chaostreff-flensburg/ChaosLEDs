@@ -1,15 +1,11 @@
 const numCPUs = require('os').cpus().length;
 const cluster = require('cluster');
+const fs = require('fs');
 
 //set pins
 const rPin = 2;
 const gPin = 3;
 const bPin = 4;
-
-var state = {
-    'function': 'setColor',
-    'rgb': rgb
-};
 
 ////////////////
 //// MASTER ////
@@ -20,6 +16,14 @@ if (cluster.isMaster) {
     /* ---------- LED WORKER HANDLER ------------- */
 
     //STATE GENERATOR
+    var state = {
+        'function': 'setColor',
+        'rgb': {
+            'r': 0,
+            'g': 0,
+            'b': 0
+        }
+    };
 
     let LEDController = function*() {
         let worker = cluster.fork();
@@ -28,15 +32,15 @@ if (cluster.isMaster) {
 
             //kill worker and create new one if function is different
             if (msg.function !== state.function) {
-              console.log("Killing last worker...");
-                worker.kill('SIGKILL');
+                console.log("Stopping last worker...");
+                worker.kill('SIGTERM');
                 worker = cluster.fork();
             }
 
             //save last state
             state = msg;
 
-            worker.send(state);
+            fs.writeFileSync('state.json', JSON.stringify(state));
         }
     };
 
@@ -67,6 +71,7 @@ if (cluster.isMaster) {
 ////////////////
 
 if (cluster.isWorker) {
+
     const pi = require('wiring-pi');
 
     //pwm values
@@ -81,7 +86,11 @@ if (cluster.isWorker) {
 
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
-    process.on('message', function(msg) {
+    var update = function() {
+
+        //communication file
+        let msg = JSON.parse(fs.readFileSync('file', 'utf8'));
+
         switch (msg.function) {
             case 'setColors':
                 l(msg.rgb);
@@ -96,7 +105,8 @@ if (cluster.isWorker) {
                 break;
 
         }
-    });
+    };
+
 
     //set lights by global rgb values
     var l = function(...rgb) {
@@ -118,53 +128,42 @@ if (cluster.isWorker) {
 
             return e;
         });
-        console.dir(rgb);
+        //console.dir(rgb);
         pi.softPwmWrite(rPin, rgb[0]);
         pi.softPwmWrite(gPin, rgb[1]);
         pi.softPwmWrite(bPin, rgb[2]);
+
+        update();
     };
 
 
     var fade = function(color) {
-        l(color);
-
         let tempColors = [color.r, color.g, color.b];
         let targets = [Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1, Math.floor(Math.random() * (255 - 1)) + 1];
 
-        while (true) {
-
-              //kill worker with parent
-              process.on("SIGTERM", function() {
-                  //set color to old value
-                  console.log("Worker shutting down...");
-                  // exit cleanly
-                  process.exit();
-              });
-
-            for (let h = 0; h < tempColors.length; h++) {
-                if (tempColors[h] < targets[h]) {
-                    ++tempColors[h];
-                } else if (tempColors[h] > targets[h]) {
-                    --tempColors[h];
-                } else if (tempColors[h] == targets[h]) {
-                    targets[h] = Math.floor(Math.random() * (256 - 1)) + 1;
-                }
-                console.log(tempColors[h]);
-                pi.softPwmWrite(rPin, tempColors[h]);
+        for (let h = 0; h < tempColors.length; h++) {
+            if (tempColors[h] < targets[h]) {
+                ++tempColors[h];
+            } else if (tempColors[h] > targets[h]) {
+                --tempColors[h];
+            } else if (tempColors[h] == targets[h]) {
+                targets[h] = Math.floor(Math.random() * (256 - 1)) + 1;
             }
-            pi.delay(10);
+            console.log(tempColors[h]);
+            pi.softPwmWrite(rPin, tempColors[h]);
         }
+        pi.delay(10);
+
+        update();
     };
 
     var blink = function(color) {
+        pi.delay(300);
         l(color);
-        while(true) {
-            pi.delay(300);
-            l(color);
-            pi.delay(300);
-            rgb = [0, 0, 0];
-            l();
-        }
-    };
+        pi.delay(300);
+        rgb = [0, 0, 0];
+        l();
 
+        update();
+    };
 }
