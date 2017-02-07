@@ -25,35 +25,12 @@ if (cluster.isMaster) {
         }
     };
 
-    let LEDController = function*() {
-        let worker = cluster.fork();
-        while (true) {
-            let msg = yield;
-
-            //kill worker and create new one if function is different
-            if (msg.function !== state.function) {
-                console.log("Stopping last worker...");
-                worker.kill('SIGTERM');
-                worker = cluster.fork();
-            }
-
-            //save last state
-            state = msg;
-
-            fs.writeFileSync('state.json', JSON.stringify(state));
-        }
-    };
-
-    let led = LEDController();
-
-    /* ------------ EVENT HANDLING ---------- */
-
     //receive signal from parent
     process.on('message', function(msg) {
         console.log(msg);
 
-        //send message to led controller
-        led.next(msg);
+        //send message to led worker
+        fs.writeFileSync('state.json', JSON.stringify(msg));
     });
 
     //kill child process with parent
