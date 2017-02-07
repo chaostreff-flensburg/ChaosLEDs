@@ -65,31 +65,7 @@ if (cluster.isWorker) {
     pi.softPwmCreate(gPin, 100, 100);
     pi.softPwmCreate(bPin, 100, 100);
 
-    /* ----------- HANDLE MASTER COMMUNICATION ------ */
-
-    var update = function() {
-            //communication file
-            let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
-            console.log(msg);
-
-            switch (msg.function) {
-                case 'setColors':
-                    l(msg.rgb);
-                    break;
-
-                case 'blink':
-                    blink(msg.rgb);
-                    break;
-
-                case 'fade':
-                    fade(msg.rgb);
-                    break;
-
-            }
-    };
-
-    update();
-
+    /* ---------- LED FUNCTIONS -------- */
 
     //set lights by global rgb values
     var l = function(...rgb) {
@@ -149,4 +125,29 @@ if (cluster.isWorker) {
 
         update();
     };
+
+    /* ----------- HANDLE MASTER COMMUNICATION ------ */
+
+    var update = function() {
+        //communication file
+        let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
+        console.log(msg);
+
+        switch (msg.function) {
+            case 'setColors':
+                l(msg.rgb);
+                break;
+
+            case 'blink':
+                blink(msg.rgb);
+                break;
+
+            case 'fade':
+                fade(msg.rgb);
+                break;
+
+        }
+    };
+
+    update();
 }
