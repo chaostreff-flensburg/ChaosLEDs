@@ -145,7 +145,7 @@ if (cluster.isWorker) {
                     'function': ""
                 };
             }
-            console.log(msg);
+            //console.log(msg);
 
             switch (msg.function) {
                 case 'setColors':
