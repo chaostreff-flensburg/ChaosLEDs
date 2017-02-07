@@ -67,6 +67,7 @@ if (cluster.isWorker) {
         while (true) {
             //communication file
             let msg = JSON.parse(fs.readFileSync('file', 'utf8'));
+            console.log(msg);
 
             switch (msg.function) {
                 case 'setColors':
