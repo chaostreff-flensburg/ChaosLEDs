@@ -21,15 +21,21 @@ if (cluster.isMaster) {
         }
     };
 
-    //create led worker
-    cluster.fork();
+    let worker = null;
 
     //receive signal from parent
     process.on('message', function(msg) {
         //console.log(msg);
 
         //send message to led worker
-        fs.writeFileSync(file, JSON.stringify(msg), {'flag': 'w+'});
+        fs.writeFileSync(file, JSON.stringify(msg), {
+            'flag': 'w+'
+        });
+
+        if (worker === null) {
+            //create led worker
+            worker = cluster.fork();
+        }
     });
 
     //kill child process with parent
@@ -130,30 +136,30 @@ if (cluster.isWorker) {
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
     var update = function() {
-      try{
-        setTimeout(function() {
-            //communication file
-            let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
-            console.log(msg);
+        try {
+            setTimeout(function() {
+                //communication file
+                let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
+                console.log(msg);
 
-            switch (msg.function) {
-                case 'setColors':
-                    l(msg.rgb);
-                    break;
+                switch (msg.function) {
+                    case 'setColors':
+                        l(msg.rgb);
+                        break;
 
-                case 'blink':
-                    blink(msg.rgb);
-                    break;
+                    case 'blink':
+                        blink(msg.rgb);
+                        break;
 
-                case 'fade':
-                    fade();
-                    break;
+                    case 'fade':
+                        fade();
+                        break;
 
-            }
-        }, 1000 / 60);
-      } catch(e) {
-        
-      }
+                }
+            }, 1000 / 60);
+        } catch (e) {
+
+        }
     };
 
     update();
