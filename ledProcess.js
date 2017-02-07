@@ -129,24 +129,26 @@ if (cluster.isWorker) {
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
     var update = function() {
-        //communication file
-        let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
-        console.log(msg);
+        setTimeout(function() {
+            //communication file
+            let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
+            console.log(msg);
 
-        switch (msg.function) {
-            case 'setColors':
-                l(msg.rgb);
-                break;
+            switch (msg.function) {
+                case 'setColors':
+                    l(msg.rgb);
+                    break;
 
-            case 'blink':
-                blink(msg.rgb);
-                break;
+                case 'blink':
+                    blink(msg.rgb);
+                    break;
 
-            case 'fade':
-                fade(msg.rgb);
-                break;
+                case 'fade':
+                    fade(msg.rgb);
+                    break;
 
-        }
+            }
+        }, 300);
     };
 
     update();
