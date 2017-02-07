@@ -29,7 +29,9 @@ if (cluster.isMaster) {
         //console.log(msg);
 
         //send message to led worker
-        fs.writeFile(file, JSON.stringify(msg));
+        fs.writeFile(file, JSON.stringify(msg), function() {
+          
+        });
     });
 
     //kill child process with parent
