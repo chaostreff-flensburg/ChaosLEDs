@@ -130,6 +130,7 @@ if (cluster.isWorker) {
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
     var update = function() {
+      try{
         setTimeout(function() {
             //communication file
             let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -150,6 +151,9 @@ if (cluster.isWorker) {
 
             }
         }, 1000 / 60);
+      } catch(e) {
+        
+      }
     };
 
     update();
