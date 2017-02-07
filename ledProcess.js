@@ -1,6 +1,7 @@
 const numCPUs = require('os').cpus().length;
 const cluster = require('cluster');
 const fs = require('fs');
+const file = "state.json";
 
 ////////////////
 //// MASTER ////
@@ -28,7 +29,7 @@ if (cluster.isMaster) {
         //console.log(msg);
 
         //send message to led worker
-        fs.writeFileSync('state.json', JSON.stringify(msg));
+        fs.writeFileSync(file, JSON.stringify(msg));
     });
 
     //kill child process with parent
@@ -68,7 +69,7 @@ if (cluster.isWorker) {
 
     var update = function() {
             //communication file
-            let msg = JSON.parse(fs.readFileSync('file', 'utf8'));
+            let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
             console.log(msg);
 
             switch (msg.function) {
