@@ -84,6 +84,8 @@ if (cluster.isWorker) {
         }
     };
 
+    update();
+
 
     //set lights by global rgb values
     var l = function(...rgb) {
