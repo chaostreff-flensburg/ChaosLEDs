@@ -27,12 +27,18 @@ if (cluster.isMaster) {
     process.on('message', function(msg) {
         //console.log(msg);
 
-        //send message to led worker
-        setTimeout(function() {
-                  fs.writeFileSync(file, JSON.stringify(msg), {
+        //write lock file
+        fs.writeFileSync(file + "__lock", JSON.stringify(msg), {
             'flag': 'w+'
         });
-      }, 1000/60);
+
+        //send message to led worker
+        fs.writeFileSync(file, JSON.stringify(msg), {
+            'flag': 'w+'
+        });
+
+        //remove lock
+        fs.unlinkSync(file + '__lock');
 
         if (worker === null) {
             //create led worker
@@ -138,26 +144,33 @@ if (cluster.isWorker) {
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
     var update = function() {
+        try {
             setTimeout(function() {
-                //communication file
-                let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
-                console.log(msg);
+                //wait till lock file is removed
+                if (fs.accessSync(file + '__lock', fs.constants.F_OK)) {
+                    //read communication file
+                    let msg = JSON.parse(fs.readFileSync(file, 'utf8'));
+                    console.log(msg);
 
-                switch (msg.function) {
-                    case 'setColors':
-                        l(msg.rgb);
-                        break;
+                    switch (msg.function) {
+                        case 'setColors':
+                            l(msg.rgb);
+                            break;
 
-                    case 'blink':
-                        blink(msg.rgb);
-                        break;
+                        case 'blink':
+                            blink(msg.rgb);
+                            break;
 
-                    case 'fade':
-                        fade();
-                        break;
+                        case 'fade':
+                            fade();
+                            break;
 
+                    }
                 }
             }, 1000 / 60);
+        } catch (e) {
+
+        }
     };
 
     update();
