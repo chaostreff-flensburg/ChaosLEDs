@@ -4,7 +4,7 @@
   "description": "led control server",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js --ignore package.json",
+    "start": "nodemon server.js --ignore state.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Chaostreff Flensburg e.V. / Jonas Leitner",
