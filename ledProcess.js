@@ -20,6 +20,9 @@ if (cluster.isMaster) {
         }
     };
 
+    //create led worker
+    cluster.fork();
+
     //receive signal from parent
     process.on('message', function(msg) {
         //console.log(msg);
@@ -64,7 +67,6 @@ if (cluster.isWorker) {
     /* ----------- HANDLE MASTER COMMUNICATION ------ */
 
     var update = function() {
-        while (true) {
             //communication file
             let msg = JSON.parse(fs.readFileSync('file', 'utf8'));
             console.log(msg);
@@ -83,7 +85,6 @@ if (cluster.isWorker) {
                     break;
 
             }
-        }
     };
 
     update();
