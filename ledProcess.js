@@ -2,11 +2,6 @@ const numCPUs = require('os').cpus().length;
 const cluster = require('cluster');
 const fs = require('fs');
 
-//set pins
-const rPin = 2;
-const gPin = 3;
-const bPin = 4;
-
 ////////////////
 //// MASTER ////
 ////////////////
@@ -27,7 +22,7 @@ if (cluster.isMaster) {
 
     //receive signal from parent
     process.on('message', function(msg) {
-        console.log(msg);
+        //console.log(msg);
 
         //send message to led worker
         fs.writeFileSync('state.json', JSON.stringify(msg));
@@ -50,6 +45,11 @@ if (cluster.isMaster) {
 if (cluster.isWorker) {
 
     const pi = require('wiring-pi');
+
+    //set pins
+    const rPin = 2;
+    const gPin = 3;
+    const bPin = 4;
 
     //pwm values
     var rgb = [0, 0, 0];
