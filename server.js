@@ -63,6 +63,8 @@ router.post('/slack', function (req, res) {
         'b': 255
       }
   });
+  res.status(200);
+  res.end();
 });
 
 app.use(router);

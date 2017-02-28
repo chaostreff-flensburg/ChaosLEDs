@@ -129,6 +129,7 @@ var fade = function(color) {
 
 var blink = function(color) {
     setAllColors(1);
+    pi.delay(300);
     for (var i = 0; i < 2; i++) {
         setColors(color.r, color.g, color.b);
         pi.delay(300);
@@ -136,5 +137,4 @@ var blink = function(color) {
         pi.delay(300);
     }
     setColors(color.r, color.g, color.b);
-    still();
 };
