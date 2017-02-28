@@ -52,6 +52,19 @@ router.get('/', function(req, res) {
     res.render('panel', []);
 });
 
+//slack webhook endpoint
+router.post('/slack', function (req, res) {
+  console.log(req.body);
+  led.send({
+      'function': 'blink',
+      'color': {
+        'r': 255,
+        'g': 255,
+        'b': 255
+      }
+  });
+});
+
 app.use(router);
 
 // ====================
