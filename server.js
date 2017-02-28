@@ -59,8 +59,8 @@ router.post('/slack', function (req, res) {
       'function': 'blink',
       'color': {
         'r': 255,
-        'g': 255,
-        'b': 255
+        'g': 1,
+        'b': 1
       }
   });
   res.status(200);
