@@ -1,5 +1,5 @@
 var pi = require('wiring-pi');
-//pi.wiringPiSetupGpio();
+///pi.wiringPiSetupGpio();
 
 //set pins
 const rPin = 2;
