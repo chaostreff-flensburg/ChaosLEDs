@@ -4,7 +4,7 @@
   "description": "led control server",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "forever start server.js",
     "test": "mocha ./tests/test.js"
   },
   "author": "Chaostreff Flensburg e.V. / Jonas Leitner",
