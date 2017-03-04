@@ -216,3 +216,7 @@ h1 {
 	position: relative;
 	height: 36px;
 }
+
+#controlInfo {
+	font-size: 16px;
+}
