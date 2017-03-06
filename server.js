@@ -272,12 +272,14 @@ io.on('connection', function(socket) {
             b = msg.b;
 
             //send current rgb values to led process
+            /*
             led.send({
                 'function': 'setColors',
                 'r': r,
                 'g': g,
                 'b': b
             });
+            */
         }
     });
 

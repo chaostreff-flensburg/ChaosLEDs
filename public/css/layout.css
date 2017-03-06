@@ -212,11 +212,26 @@ h1 {
 #colorpickerHolder2 .colorpicker input {
 	color: #778398;
 }
+
 #customWidget {
 	position: relative;
 	height: 36px;
 }
 
+/* CUSTOM STUFF */
+
 #controlInfo {
-	font-size: 18px;
+	font-size: 26px;
+	font-family: bold;
+	margin-top: 5%;
+}
+
+#colorpickerHolder {
+	margin-top: 5%;
+}
+
+#background {
+	height: 100%;
+	width: 100%;
+	background-color: white;
 }

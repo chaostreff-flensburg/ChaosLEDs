@@ -26,28 +26,50 @@
         var g = 100;
         var b = 100;
     </script>
-    <!-- displays controller status/ remaining waiting time -->
-    <div id="controlInfo">No connection to Host</div>
+    <div id="background">
+        <!-- displays controller status/ remaining waiting time -->
+        <div id="controlInfo">No connection to Host</div>
 
-    <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
-    <script type="text/javascript" src="js/colorpicker.js"></script>
+        <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+        <script type="text/javascript" src="js/colorpicker.js"></script>
 
-    <!-- colorpicker -->
-    <p id="colorpickerHolder"></p>
-    <!-- reconnect button -->
-    <div id="reconnect" style="display:none;">
-        <input id="reconnectButton" type="button" value="Verbindung wiederherstellen">
-    </div>
-    <!--
+        <!-- colorpicker -->
+        <p id="colorpickerHolder"></p>
+        <!-- reconnect button -->
+        <div id="reconnect" style="display:none;">
+            <input id="reconnectButton" type="button" value="Verbindung wiederherstellen">
+        </div>
+        <!--
     <input class="controlElement" type="button" value="Fade" onclick="socket.emit('function', {'function' : 'fade', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
     <input class="controlElement" type="button" value="Blink" onclick="socket.emit('function', {'function' : 'blink', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
   -->
+    </div>
     <script>
+        let background = $('#background');
+
         //add colorpicker
         $('#colorpickerHolder').ColorPicker({
             flat: true,
             onChange: function(hsb, hex, rgb) {
-                setColor(rgb);
+                if (controlling) {
+                    //emit color
+                    setColor(rgb);
+
+                    //change local color variables
+                    r = rgb.r;
+                    g = rgb.g;
+                    b = rgb.b;
+
+                    //change backgroundcolor according to new color
+                    background.css('backgroundColor', "rgb(" + r + ", " + g + ", " + b + ")");
+                } else {
+                    //return color to last value (dont change it)
+                    $('#colorpickerHolder').ColorPickerSetColor({
+                        "r": r,
+                        "g": g,
+                        "b": b
+                    });
+                }
             }
         });
 
@@ -72,12 +94,23 @@
 
         //set intial slider values
         socket.on('initialize', function(msg) {
-            //console.log($('#colorpickerHolder').ColorPickerSetColor(msg));
+            r = msg.r;
+            g = msg.g;
+            b = msg.b;
+
+            $('#colorpickerHolder').ColorPickerSetColor({
+                "r": r,
+                "g": g,
+                "b": b
+            });
+
+            //change backgroundcolor according to new color
+            background.css('backgroundColor', "rgb(" + r + ", " + g + ", " + b + ")");
         });
 
         //lock sliders if user is not in control
         socket.on('controlling', function(msg) {
-            console.dir(msg);
+            //console.dir(msg);
             controlling = msg.control;
             afk = msg.afk === true ? true : false;
 
@@ -111,12 +144,15 @@
             r = msg.r;
             g = msg.g;
             b = msg.b;
+
+            //change backgroundcolor according to new color
+            background.css('backgroundColor', "rgb(" + r + ", " + g + ", " + b + ")");
         });
 
         //if client is not controlling, periodically check if control has been given to client
         var controllerCheck = function() {
             if (!controlling && afk === false) {
-                console.log("Checking for Controller change...");
+                //console.log("Checking for Controller change...");
                 socket.emit('controllercheck', {});
             }
             setTimeout(
@@ -140,7 +176,7 @@
 
         //add event listener to reconnect button
         $('#reconnectButton').click(function() {
-            console.log("Reconnecting...");
+            //console.log("Reconnecting...");
             //connect to server
             socket.connect({
                 "forceNew": true
