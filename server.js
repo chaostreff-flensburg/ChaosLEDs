@@ -14,7 +14,7 @@ var express = require("express"),
     methodOverride = require('method-override'),
     errorHandler = require('errorhandler'),
     hostname = process.env.HOSTNAME || 'localhost',
-    PORT = process.env.PORT || 80,
+    PORT = process.env.PORT || 8080,
     publicDir = process.argv[2] || __dirname + '/public',
     path = require('path'),
     io = require("socket.io")(http, {
@@ -72,6 +72,7 @@ app.use(router);
 // ====================
 // Socket.io
 // ====================
+
 var r = 100;
 var g = 100;
 var b = 100;
@@ -129,6 +130,8 @@ var controllerCheck = function() {
 
         //remove first socket from waiting list
         waitingSockets.splice(0, 1);
+
+        return;
     }
 
     //replace controller if he is controlling for longer than the allowed controlling time
@@ -152,6 +155,8 @@ var controllerCheck = function() {
 
         //remove first socket from waiting list
         waitingSockets.splice(0, 1);
+
+        return;
     }
 };
 
@@ -254,8 +259,6 @@ io.on('connection', function(socket) {
 process.on('message', function(message) {
     console.log(message);
 });
-
-//led.send('wululu');
 
 // ====================
 // Start the Server
