@@ -36,7 +36,7 @@
     <p id="colorpickerHolder"></p>
     <!-- reconnect button -->
     <div id="reconnect" style="display:none;">
-        <input class="reconnectButton" type="button" value="Verbindung wiederherstellen">
+        <input id="reconnectButton" type="button" value="Verbindung wiederherstellen">
     </div>
     <!--
     <input class="controlElement" type="button" value="Fade" onclick="socket.emit('function', {'function' : 'fade', 'color' : {'r' : r, 'g' : g, 'b' : b}});">
@@ -139,14 +139,17 @@
         waitingTimer();
 
         //add event listener to reconnect button
-        $('reconnectButton').click(function(e) {
+        $('#reconnectButton').click(function() {
+            console.log("Reconnecting...");
             //connect to server
             socket.connect({
                 "forceNew": true
             });
 
+            afk = false;
+
             //hide reconnect button
-            $('#reconnect').css("display","none");
+            $('#reconnect').css("display", "none");
         });
     </script>
 </body>
