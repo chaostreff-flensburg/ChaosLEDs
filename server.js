@@ -14,7 +14,7 @@ var express = require("express"),
     methodOverride = require('method-override'),
     errorHandler = require('errorhandler'),
     hostname = process.env.HOSTNAME || 'localhost',
-    PORT = process.env.PORT || 8080,
+    PORT = process.env.PORT || 80,
     publicDir = process.argv[2] || __dirname + '/public',
     path = require('path'),
     io = require("socket.io")(http, {
@@ -272,14 +272,12 @@ io.on('connection', function(socket) {
             b = msg.b;
 
             //send current rgb values to led process
-            /*
             led.send({
                 'function': 'setColors',
                 'r': r,
                 'g': g,
                 'b': b
             });
-            */
         }
     });
 
