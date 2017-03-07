@@ -45,8 +45,6 @@
   -->
     </div>
     <script>
-        let background = $('#background');
-
         //add colorpicker
         $('#colorpickerHolder').ColorPicker({
             flat: true,
@@ -61,7 +59,7 @@
                     b = rgb.b;
 
                     //change backgroundcolor according to new color
-                    background.css('backgroundColor', "rgb(" + r + ", " + g + ", " + b + ")");
+                    $('.colorpicker').css('box-shadow', '0px 0px 100px 40px rgb(' + r + ', ' + g + ', ' + b + ')');
                 } else {
                     //return color to last value (dont change it)
                     $('#colorpickerHolder').ColorPickerSetColor({
@@ -105,7 +103,7 @@
             });
 
             //change backgroundcolor according to new color
-            background.css('backgroundColor', "rgb(" + r + ", " + g + ", " + b + ")");
+            $('.colorpicker').css('box-shadow', '0px 0px 100px 40px rgb(' + r + ', ' + g + ', ' + b + ')');
         });
 
         //lock sliders if user is not in control
@@ -146,7 +144,7 @@
             b = msg.b;
 
             //change backgroundcolor according to new color
-            background.css('backgroundColor', "rgb(" + r + ", " + g + ", " + b + ")");
+            $('.colorpicker').css('box-shadow', '0px 0px 100px 40px rgb(' + r + ', ' + g + ', ' + b + ')');
         });
 
         //if client is not controlling, periodically check if control has been given to client

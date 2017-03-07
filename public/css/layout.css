@@ -135,6 +135,10 @@ h1 {
 	margin-top: 16px;
 }
 
+.colorpicker {
+	box-shadow: 0px 0px 100px black;
+}
+
 #colorSelector {
 	position: relative;
 	width: 36px;
@@ -224,6 +228,7 @@ h1 {
 	font-size: 26px;
 	font-family: bold;
 	margin-top: 5%;
+	color: black;
 }
 
 #colorpickerHolder {
@@ -231,7 +236,10 @@ h1 {
 }
 
 #background {
+	position: absolute;
 	height: 100%;
 	width: 100%;
+	top: 0;
+	left: 0;
 	background-color: white;
 }
