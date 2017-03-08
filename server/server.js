@@ -195,6 +195,7 @@ io.on('connection', function(socket) {
 
     //set socket either as user or led client
     socket.on('role', function(msg) {
+      console.log(msg);
         let role = msg.role;
 
         if (role == "user") {
