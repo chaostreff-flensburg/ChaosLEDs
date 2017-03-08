@@ -213,6 +213,7 @@ io.on('connection', function(socket) {
 
         if (role == "client") {
             socket.join('/clients');
+            console.log('Client connected');
         }
     });
 
