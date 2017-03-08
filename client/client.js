@@ -2,8 +2,10 @@ var pi = require('wiring-pi'),
     masterUrl = 'http://10.9.0.2:8803',
     socket = require('socket.io-client')(masterUrl);
 
-    //join server as client
-    socket.emit('role', {role: "client"});
+//join server as client
+socket.emit('role', {
+    role: "client"
+});
 
 pi.wiringPiSetupGpio();
 
