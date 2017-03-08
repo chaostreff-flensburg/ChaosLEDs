@@ -4,7 +4,7 @@
 cd /home/jonas/ChaosLEDs
 git pull
 cd server
-npm install -g -y
+npm install -y
 forever restartall
 
 #deploy led client
