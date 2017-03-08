@@ -280,7 +280,7 @@ io.on('connection', function(socket) {
             b = msg.b;
 
             //send current rgb values to led process
-            io.to('/clients').broadcast('message', {
+            io.to('/clients').emit('message', {
                 'function': 'setColors',
                 'r': r,
                 'g': g,
