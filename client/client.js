@@ -1,10 +1,11 @@
-//var pi = require('wiring-pi'),
-    socket = require('socket.io-client')('http://localhost:8083/client');
+var pi = require('wiring-pi'),
+    masterUrl = 'http://10.9.0.2:8803',
+    socket = require('socket.io-client')(masterUrl);
 
     //join server as client
     socket.emit('role', {role: "client"});
 
-//pi.wiringPiSetupGpio();
+pi.wiringPiSetupGpio();
 
 //set pins
 const rPin = 2;
