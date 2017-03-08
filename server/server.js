@@ -6,15 +6,13 @@ var express = require("express"),
     app = express(),
     router = express.Router(),
     http = require('http').Server(app),
-    cp = require('child_process'),
-    led = cp.fork('ledProcess.js'),
     server = require('http').createServer(app),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     methodOverride = require('method-override'),
     errorHandler = require('errorhandler'),
     hostname = process.env.HOSTNAME || 'localhost',
-    PORT = process.env.PORT || 80,
+    PORT = process.env.PORT || 8083,
     publicDir = process.argv[2] || __dirname + '/public',
     path = require('path'),
     io = require("socket.io")(http, {
@@ -197,16 +195,27 @@ var controllerCheck = function() {
 //connection handling
 io.on('connection', function(socket) {
 
-    //add socket to waiting pool
-    waitingSockets.push(socket.id);
+    //set socket either as user or led client
+    socket.on('role', function(msg) {
+        let role = msg.role;
 
-    //check current controller
-    controllerCheck();
+        if (role == "user") {
+            //add socket to waiting pool
+            waitingSockets.push(socket.id);
 
-    //tell socket whether it is the controller or not
-    socket.emit('controlling', {
-        control: (socket.id === controllingSocket),
-        waitingTime: waitingTimeCheck(socket)
+            //check current controller
+            controllerCheck();
+
+            //tell socket whether it is the controller or not
+            socket.emit('controlling', {
+                control: (socket.id === controllingSocket),
+                waitingTime: waitingTimeCheck(socket)
+            });
+        }
+
+        if (role == "client") {
+            socket.join('/clients');
+        }
     });
 
     //send initial values to new user
@@ -261,7 +270,7 @@ io.on('connection', function(socket) {
             //set lastInputTimestamp
             lastInputTimestamp = Date.now();
 
-            socket.broadcast.emit('color', {
+            socket.broadcast.emit('message', {
                 'r': r,
                 'g': g,
                 'b': b
@@ -272,7 +281,7 @@ io.on('connection', function(socket) {
             b = msg.b;
 
             //send current rgb values to led process
-            led.send({
+            io.to('/clients').broadcast('message', {
                 'function': 'setColors',
                 'r': r,
                 'g': g,
@@ -291,9 +300,6 @@ io.on('connection', function(socket) {
             'color': msg.color
         });
     });
-    */
-
-});
 
 // ====================
 // Control LED Process
@@ -302,6 +308,10 @@ io.on('connection', function(socket) {
 //receive signal from child
 process.on('message', function(message) {
     console.log(message);
+});
+
+    */
+
 });
 
 // ====================
