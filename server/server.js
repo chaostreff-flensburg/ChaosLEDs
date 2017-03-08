@@ -289,29 +289,6 @@ io.on('connection', function(socket) {
             });
         }
     });
-
-    /*
-    socket.on('function', function(msg) {
-        //set lastInputTimestamp
-        lastInputTimestamp = Date.now();
-
-        led.send({
-            'function': msg.function,
-            'color': msg.color
-        });
-    });
-
-// ====================
-// Control LED Process
-// ====================
-
-//receive signal from child
-process.on('message', function(message) {
-    console.log(message);
-});
-
-    */
-
 });
 
 // ====================
