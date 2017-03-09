@@ -219,8 +219,8 @@ io.on('connection', function(socket) {
         waitingSockets.splice(waitingSockets.indexOf(socket.id), 1);
 
         //remove client from controller
-        if (controller == socket.id) {
-            controller = waitingSockets[0];
+        if (controllingSocket == socket.id) {
+            controllingSocket = waitingSockets[0];
             //remove first socket from waiting list
             waitingSockets.splice(0, 1);
         }
