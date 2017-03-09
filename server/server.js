@@ -251,6 +251,9 @@ io.on('connection', function(socket) {
 
     //let clients check if the controller has changed
     socket.on('controllercheck', function() {
+        console.log("Controlcheck requested from:");
+        console.log(socket.id);
+
         controllerCheck();
 
         //if socket is not controlling, send it its waiting time
@@ -311,7 +314,7 @@ io.on('connection', function(socket) {
 
     //accept heartbeats to prevent disconnect
     socket.on('heartbeat', function(msg) {
-      
+
     });
 });
 
