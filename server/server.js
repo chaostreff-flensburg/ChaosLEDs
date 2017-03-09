@@ -204,9 +204,6 @@ io.on('connection', function(socket) {
     //set socket as client
     socket.on('user', function(msg) {
 
-        console.log("User added!");
-        console.log(socket.id);
-
         //add socket to waiting pool
         waitingSockets.push(socket.id);
 
@@ -225,6 +222,16 @@ io.on('connection', function(socket) {
             'g': g,
             'b': b
         });
+
+
+        console.log("User added:");
+        console.log(socket.id);
+
+        console.log("Waiting pool:");
+        console.dir(waitingSockets);
+
+        console.log("Controller:");
+        console.log(controllingSocket);
 
     });
 
