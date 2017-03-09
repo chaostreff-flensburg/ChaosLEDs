@@ -202,7 +202,12 @@ io.on('connection', function(socket) {
 
 
     //set socket as client
-    socket.on('user', function(msg) {
+    socket.on('role', function(msg) {
+
+      if(msg.role == "user") {
+
+        //join group which gets the color updates
+        socket.join('/color');
 
         //add socket to waiting pool
         waitingSockets.push(socket.id);
@@ -232,6 +237,13 @@ io.on('connection', function(socket) {
 
         console.log("Controller:");
         console.log(controllingSocket);
+
+      }
+
+      if(msg.role == "client") {
+        //join group which gets the color updates
+        socket.join('/color');
+      }
 
     });
 
@@ -283,7 +295,7 @@ io.on('connection', function(socket) {
             //set lastInputTimestamp
             lastInputTimestamp = Date.now();
 
-            socket.broadcast.emit('color', {
+            socket.to('/color').emit('color', {
                 'r': r,
                 'g': g,
                 'b': b
