@@ -193,28 +193,29 @@ var controllerCheck = function() {
 //connection handling
 io.on('connection', function(socket) {
 
+          console.log("User connected!");
+          //add socket to waiting pool
+          waitingSockets.push(socket.id);
+
+          //check current controller
+          controllerCheck();
+
+          //tell socket whether it is the controller or not
+          socket.emit('controlling', {
+              control: (socket.id === controllingSocket),
+              waitingTime: waitingTimeCheck(socket)
+          });
+
+          //send initial values to new user
+          socket.emit('initialize', {
+              'r': r,
+              'g': g,
+              'b': b
+          });
+          
     //set socket as user
     socket.on('user', function(msg) {
 
-        console.log("User connected!");
-        //add socket to waiting pool
-        waitingSockets.push(socket.id);
-
-        //check current controller
-        controllerCheck();
-
-        //tell socket whether it is the controller or not
-        socket.emit('controlling', {
-            control: (socket.id === controllingSocket),
-            waitingTime: waitingTimeCheck(socket)
-        });
-
-        //send initial values to new user
-        socket.emit('initialize', {
-            'r': r,
-            'g': g,
-            'b': b
-        });
 
     });
 
@@ -264,7 +265,7 @@ io.on('connection', function(socket) {
             //set lastInputTimestamp
             lastInputTimestamp = Date.now();
 
-            socket.broadcast.emit('message', {
+            socket.broadcast.emit('color', {
                 'r': r,
                 'g': g,
                 'b': b
@@ -273,14 +274,6 @@ io.on('connection', function(socket) {
             r = msg.r;
             g = msg.g;
             b = msg.b;
-
-            //send current rgb values to led process
-            io.to('/clients').emit('message', {
-                'function': 'setColors',
-                'r': r,
-                'g': g,
-                'b': b
-            });
         }
     });
 });

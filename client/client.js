@@ -24,7 +24,7 @@ pi.softPwmWrite(bPin, b);
 
 
 //receive signal from parent
-socket.on('message', function(msg) {
+socket.on('color', function(msg) {
     console.log(msg);
 
     switch (msg.function) {
