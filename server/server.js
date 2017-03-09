@@ -216,7 +216,7 @@ io.on('connection', function(socket) {
     //set socket as client
     socket.on('client', function(msg) {
         //delete socket from waiting list
-        waitingSockets.splice(waitingSocket.indexOf(socket.id), 1);
+        waitingSockets.splice(waitingSockets.indexOf(socket.id), 1);
 
         //remove client from controller
         if (controller == socket.id) {
