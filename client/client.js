@@ -2,8 +2,6 @@ var pi = require('wiring-pi'),
     masterUrl = 'http://jonasleitner.de',
     socket = require('socket.io-client')(masterUrl);
 
-socket.emit('client', {});
-
 pi.wiringPiSetupGpio();
 
 //set pins

@@ -193,38 +193,38 @@ var controllerCheck = function() {
 //connection handling
 io.on('connection', function(socket) {
 
-    console.log("User connected!");
+    console.log("Connection established!");
     console.log(socket.id);
-    //add socket to waiting pool
-    waitingSockets.push(socket.id);
+
 
     //check current controller
     controllerCheck();
 
-    //tell socket whether it is the controller or not
-    socket.emit('controlling', {
-        control: (socket.id === controllingSocket),
-        waitingTime: waitingTimeCheck(socket)
-    });
-
-    //send initial values to new user
-    socket.emit('initialize', {
-        'r': r,
-        'g': g,
-        'b': b
-    });
 
     //set socket as client
-    socket.on('client', function(msg) {
-        //delete socket from waiting list
-        waitingSockets.splice(waitingSockets.indexOf(socket.id), 1);
+    socket.on('user', function(msg) {
 
-        //remove client from controller
-        if (controllingSocket == socket.id) {
-            controllingSocket = waitingSockets[0];
-            //remove first socket from waiting list
-            waitingSockets.splice(0, 1);
-        }
+        console.log("User added!");
+        console.log(socket.id);
+
+        //add socket to waiting pool
+        waitingSockets.push(socket.id);
+
+        //check current controller
+        controllerCheck();
+
+        //tell socket whether it is the controller or not
+        socket.emit('controlling', {
+            control: (socket.id === controllingSocket),
+            waitingTime: waitingTimeCheck(socket)
+        });
+
+        //send initial values to new user
+        socket.emit('initialize', {
+            'r': r,
+            'g': g,
+            'b': b
+        });
 
     });
 
@@ -243,6 +243,8 @@ io.on('connection', function(socket) {
 
     //replace controller on disconnect/ remove socket from waitinglist
     socket.on('disconnect', function() {
+        console.log("Connection lost!");
+        console.log(socket.id);
         //check if socket is controller
         if (socket.id === controllingSocket) {
 
