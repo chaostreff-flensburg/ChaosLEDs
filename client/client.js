@@ -1,5 +1,5 @@
 var pi = require('wiring-pi'),
-    masterUrl = 'jonasleitner.de',
+    masterUrl = 'http://jonasleitner.de',
     socket = require('socket.io-client')(masterUrl);
 
 pi.wiringPiSetupGpio();
