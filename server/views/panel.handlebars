@@ -152,7 +152,7 @@
 
         //if client is not controlling, periodically check if control has been given to client
         var controllerCheck = function() {
-            if (afk === false) {
+            if (!controlling && afk === false) {
                 //console.log("Checking for Controller change...");
                 socket.emit('controllercheck', {});
             }
@@ -174,6 +174,15 @@
         }
 
         waitingTimer();
+
+        //set heartbeat to prevent disconnect
+        var heartbeat = function() {
+            socket.emit('heartbeat', {});
+            setTimeout(heartbeat, 1000);
+        }
+
+        heartbeat();
+
 
         //add event listener to reconnect button
         $('#reconnectButton').click(function() {

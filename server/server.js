@@ -308,6 +308,11 @@ io.on('connection', function(socket) {
             b = msg.b;
         }
     });
+
+    //accept heartbeats to prevent disconnect
+    socket.on('heartbeat', function(msg) {
+      
+    });
 });
 
 // ====================
