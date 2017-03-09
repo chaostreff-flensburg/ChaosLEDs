@@ -199,6 +199,7 @@ io.on('connection', function(socket) {
         let role = msg.role;
 
         if (role == "user") {
+            console.log("User connected!");
             //add socket to waiting pool
             waitingSockets.push(socket.id);
 
