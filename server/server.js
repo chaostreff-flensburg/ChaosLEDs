@@ -16,7 +16,8 @@ var express = require("express"),
     publicDir = process.argv[2] || __dirname + '/public',
     path = require('path'),
     io = require("socket.io")(http, {
-        serveClient: false
+        serveClient: false,
+        pingInterval: 1000
     }),
     exphbs = require('express-handlebars'),
     session = require('express-session');
