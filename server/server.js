@@ -193,37 +193,29 @@ var controllerCheck = function() {
 //connection handling
 io.on('connection', function(socket) {
 
-    //set socket either as user or led client
-    socket.on('role', function(msg) {
-      console.log(msg);
-        let role = msg.role;
+    //set socket as user
+    socket.on('user', function(msg) {
 
-        if (role == "user") {
-            console.log("User connected!");
-            //add socket to waiting pool
-            waitingSockets.push(socket.id);
+        console.log("User connected!");
+        //add socket to waiting pool
+        waitingSockets.push(socket.id);
 
-            //check current controller
-            controllerCheck();
+        //check current controller
+        controllerCheck();
 
-            //tell socket whether it is the controller or not
-            socket.emit('controlling', {
-                control: (socket.id === controllingSocket),
-                waitingTime: waitingTimeCheck(socket)
-            });
-        }
+        //tell socket whether it is the controller or not
+        socket.emit('controlling', {
+            control: (socket.id === controllingSocket),
+            waitingTime: waitingTimeCheck(socket)
+        });
 
-        if (role == "client") {
-            socket.join('/clients');
-            console.log('Client connected');
-        }
-    });
+        //send initial values to new user
+        socket.emit('initialize', {
+            'r': r,
+            'g': g,
+            'b': b
+        });
 
-    //send initial values to new user
-    socket.emit('initialize', {
-        'r': r,
-        'g': g,
-        'b': b
     });
 
     //let clients check if the controller has changed
@@ -265,6 +257,7 @@ io.on('connection', function(socket) {
 
     //handle incoming values
     socket.on('color', function(msg) {
+        console.log(msg);
 
         //only process input from currently controlling socket
         if (socket.id === controllingSocket) {
