@@ -152,7 +152,7 @@
 
         //if client is not controlling, periodically check if control has been given to client
         var controllerCheck = function() {
-            if (!controlling && afk === false) {
+            if (afk === false) {
                 //console.log("Checking for Controller change...");
                 socket.emit('controllercheck', {});
             }
