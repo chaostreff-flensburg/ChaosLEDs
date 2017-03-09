@@ -193,29 +193,37 @@ var controllerCheck = function() {
 //connection handling
 io.on('connection', function(socket) {
 
-          console.log("User connected!");
-          //add socket to waiting pool
-          waitingSockets.push(socket.id);
+    console.log("User connected!");
+    //add socket to waiting pool
+    waitingSockets.push(socket.id);
 
-          //check current controller
-          controllerCheck();
+    //check current controller
+    controllerCheck();
 
-          //tell socket whether it is the controller or not
-          socket.emit('controlling', {
-              control: (socket.id === controllingSocket),
-              waitingTime: waitingTimeCheck(socket)
-          });
+    //tell socket whether it is the controller or not
+    socket.emit('controlling', {
+        control: (socket.id === controllingSocket),
+        waitingTime: waitingTimeCheck(socket)
+    });
 
-          //send initial values to new user
-          socket.emit('initialize', {
-              'r': r,
-              'g': g,
-              'b': b
-          });
-          
-    //set socket as user
-    socket.on('user', function(msg) {
+    //send initial values to new user
+    socket.emit('initialize', {
+        'r': r,
+        'g': g,
+        'b': b
+    });
 
+    //set socket as client
+    socket.on('client', function(msg) {
+        //delete socket from waiting list
+        waitingSockets.splice(waitingSocket.indexOf(socket.id), 1);
+
+        //remove client from controller
+        if (controller == socket.id) {
+            controller = waitingSockets[0];
+            //remove first socket from waiting list
+            waitingSockets.splice(0, 1);
+        }
 
     });
 
