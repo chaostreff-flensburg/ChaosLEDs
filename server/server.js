@@ -17,7 +17,8 @@ var express = require("express"),
     path = require('path'),
     io = require("socket.io")(http, {
         serveClient: false,
-        pingInterval: 1000
+        pingInterval: 1000,
+        pingTimeout: 10000
     }),
     exphbs = require('express-handlebars'),
     session = require('express-session');
