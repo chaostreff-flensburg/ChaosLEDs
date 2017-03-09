@@ -194,6 +194,7 @@ var controllerCheck = function() {
 io.on('connection', function(socket) {
 
     console.log("User connected!");
+    console.log(socket.id);
     //add socket to waiting pool
     waitingSockets.push(socket.id);
 
