@@ -1,5 +1,5 @@
 var pi = require('wiring-pi'),
-    masterUrl = 'http://jonasleitner.de',
+    masterUrl = '10.9.0.1:8083',
     socket = require('socket.io-client')(masterUrl);
 
 //join server as client
