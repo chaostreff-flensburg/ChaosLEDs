@@ -70,12 +70,6 @@ app.use(router);
 // ====================
 // Socket.io
 // ====================
-io.set('transports', [                     // enable all transports (optional if you want flashsocket)
-    'websocket',
-   'htmlfile',
-   'xhr-polling',
-   'jsonp-polling'
-]);
 
 var r = 100;
 var g = 100;
