@@ -31,7 +31,8 @@ pi.softPwmWrite(bPin, b);
 //receive signal from parent
 socket.on('color', function(msg) {
     console.log(msg);
-
+    setColors(msg.r, msg.g, msg.b);
+/*
     switch (msg.function) {
         case 'setColors':
             setColors(msg.r, msg.g, msg.b);
@@ -49,6 +50,7 @@ socket.on('color', function(msg) {
             setAllColors(parseInt(msg.color));
             break;
     }
+    */
 });
 
 /* ---------- LED FUNCTIONS ------------- */
@@ -86,6 +88,14 @@ var l = function(color, brightness) {
     }
 };
 
+var setColors = function(rValue, gValue, bValue) {
+    l(1, rValue);
+    l(2, gValue);
+    l(3, bValue);
+};
+
+/*
+
 var setAllColors = function(brightness) {
     setColors(brightness, brightness, brightness);
 };
@@ -94,14 +104,6 @@ var still = function() {
     l('r', r);
     l('g', g);
     l('b', b);
-};
-
-var setColors = function(rValue, gValue, bValue) {
-    r = rValue;
-    g = gValue;
-    b = bValue;
-
-    still();
 };
 
 var fade = function(color) {
@@ -139,3 +141,4 @@ var blink = function(color) {
     }
     setColors(color.r, color.g, color.b);
 };
+*/

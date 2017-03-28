@@ -1,4 +1,4 @@
-var masterUrl = 'http://localhost:8083',
+var masterUrl = 'http://jonasleitner.de',
     socket = require('socket.io-client')(masterUrl);
 
 //join server as client
