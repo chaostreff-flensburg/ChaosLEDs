@@ -89,9 +89,9 @@ var l = function(color, brightness) {
 };
 
 var setColors = function(rValue, gValue, bValue) {
-    l(1, rValue);
-    l(2, gValue);
-    l(3, bValue);
+    l(0, rValue);
+    l(1, gValue);
+    l(2, bValue);
 };
 
 /*
